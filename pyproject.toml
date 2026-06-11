@@ -1,0 +1,44 @@
+[project]
+name = "maya-mcp"
+version = "0.1.0"
+description = "Maya MCP Server - 通过 MCP 协议远程控制 Autodesk Maya"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "maya-mcp Contributors"}
+]
+keywords = ["maya", "mcp", "model-context-protocol", "autodesk", "3d"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+]
+
+dependencies = [
+    "mcp>=1.0.0",
+    "pydantic>=2.0.0",
+    "pydantic-core>=2.0.0",
+]
+
+[project.scripts]
+maya-mcp = "maya_mcp:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["maya_mcp"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "maya_mcp/**",
+    "pyproject.toml",
+    "README.md",
+]

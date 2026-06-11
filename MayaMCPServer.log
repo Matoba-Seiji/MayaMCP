@@ -1,0 +1,1470 @@
+12:41:30 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Requesting a list of tools.
+
+12:53:34 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool list_objects with arguments: {'limit': 1000, 'object_type': 'joint'}
+
+12:53:34 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+12:53:34 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 2551 字符
+
+12:53:34 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 12409 字符
+
+12:53:34 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "count": 880, "objects": ["Bip001", "Bip001FBXASC032Footsteps", "Bip001FBXASC032Head", "Bip001FBXASC032HeadNub", "Bip001FBXASC032LCalfTwist", "Bip001FBXASC032LCalfTwist1", "Bip001FBXASC032LFBXASC032Calf", "Bip001FBXASC032LFBXASC032Clavicle", "Bip001FBXASC032LFBXASC032Finger0", "Bip001FBXASC032LFBXASC032Finger01", "Bip001FBXASC032LFBXASC032Finger02", "Bip001FBXASC032LFBXASC032Finger0Nub", "Bip001FBXASC032LFBXASC032Finger1", "Bip001FBXASC032LFBXASC032Finger1Nub", "Bip001FBXASC032
+
+12:53:53 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': "jnts = cmds.ls(type='joint'); cmds.select(jnts, replace=True); "
+         "result = {'joint_total': len(jnts), 'selected_count': "
+         'len(cmds.ls(selection=True))}'}
+
+12:53:53 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+12:53:53 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 2491 字符
+
+12:53:53 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 150 字符
+
+12:53:53 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"joint_total": 880, "selected_count": 880}, "output": "", "message": "Python \u811a\u672c\u6267\u884c\u6210\u529f\u3002"}
+
+14:04:42 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         "out['range']=[cmds.playbackOptions(q=True,min=True),cmds.playbackOptions(q=True,max=True)]\n"
+         "root=cmds.ls('Bone062',long=True) or cmds.ls('*Bone062*',long=True)\n"
+         "out['root_found']=root\n"
+         'if root:\n'
+         '    r=root[0]\n'
+         '    # build chain by first transform child\n'
+         '    chain=[r]\n'
+         '    cur=r\n'
+         '    for _ in range(40):\n'
+         '        '
+         "kids=cmds.listRelatives(cur,children=True,type='transform',fullPath=True) "
+         'or []\n'
+         '        if not kids: break\n'
+         '        chain.append(kids[0]); cur=kids[0]\n'
+         "    out['chain']=[c.rsplit('|',1)[-1] for c in chain]\n"
+         '    # sample rz/ry/rx keys on first 3 bones around 500-end\n'
+         '    info={}\n'
+         '    for c in chain[:3]:\n'
+         "        nm=c.rsplit('|',1)[-1]\n"
+         '        d={}\n'
+         "        for a in ('rotateX','rotateY','rotateZ'):\n"
+         "            plug=c+'.'+a\n"
+         '            kt=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         "            d[a+'_keycount']=len(kt)\n"
+         "            d[a+'_first_last']=[kt[0],kt[-1]] if kt else None\n"
+         '            # values at 503..end step in range\n'
+         '            vals=[]\n'
+         '            for f in [500,503,505,507,510,515,520]:\n'
+         '                try:\n'
+         '                    v=cmds.getAttr(plug,time=f)\n'
+         '                    vals.append([f,round(v,2)])\n'
+         '                except Exception:\n'
+         '                    pass\n'
+         '            d[a]=vals\n'
+         '        info[nm]=d\n'
+         "    out['curves']=info\n"
+         'result=out'}
+
+14:04:42 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:04:42 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3631 字符
+
+14:04:42 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 1965 字符
+
+14:04:42 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"range": [0.0, 520.0], "root_found": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032Neck|Bip001FBXASC032Head|Bone062"], "chain": ["Bone062", "Bone063", "Bone064", "Bone065", "Bone066", "Bone067", "Bone068"], "curves": {"Bone062": {"rotateX_keycount": 521, "rotateX_first_last": [0.0, 520.0], "rotateX": [[500, 78.47], [503, 78.49], [505, 78.51], [507, 78.63], [510, 78.99], [515, 79.88], [520, 80.32]]
+
+14:10:49 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         "out['range']=[cmds.playbackOptions(q=True,min=True),cmds.playbackOptions(q=True,max=True)]\n"
+         "root=cmds.ls('Bone621',long=True) or cmds.ls('*Bone621*',long=True)\n"
+         "out['root_found']=root\n"
+         'if root:\n'
+         '    r=root[0]\n'
+         '    chain=[r]; cur=r\n'
+         '    for _ in range(40):\n'
+         '        '
+         "kids=cmds.listRelatives(cur,children=True,type='transform',fullPath=True) "
+         'or []\n'
+         '        if not kids: break\n'
+         '        chain.append(kids[0]); cur=kids[0]\n'
+         "    out['chain']=[c.rsplit('|',1)[-1] for c in chain]\n"
+         '    mn=cmds.playbackOptions(q=True,min=True); '
+         'mx=cmds.playbackOptions(q=True,max=True)\n'
+         '    info={}\n'
+         '    for c in chain[:3]:\n'
+         "        nm=c.rsplit('|',1)[-1]; d={}\n"
+         "        for a in ('rotateX','rotateY','rotateZ'):\n"
+         "            plug=c+'.'+a\n"
+         '            kt=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         "            d[a+'_keycount']=len(kt)\n"
+         '            vals=[]\n'
+         '            for f in [int(mn),500,503,505,507,510,515,int(mx)]:\n'
+         '                try:\n'
+         '                    '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),2)])\n'
+         '                except Exception: pass\n'
+         '            d[a]=vals\n'
+         '        info[nm]=d\n'
+         "    out['curves']=info\n"
+         'result=out'}
+
+14:10:49 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:10:49 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3465 字符
+
+14:10:49 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 1914 字符
+
+14:10:49 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"range": [0.0, 520.0], "root_found": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032RFBXASC032Clavicle|Bip001FBXASC032RFBXASC032UpperArm|Bip001FBXASC032RFBXASC032Forearm|Bip001FBXASC032RFBXASC032Hand|Bone001|Bone621"], "chain": ["Bone621", "Bone622", "Bone623", "Bone624", "Bone625", "Bone626", "Bone627", "Bone628", "Bone629", "Bone630", "Bone631", "Bone632"], "curves": {"Bone621": {"rotateX_keycoun
+
+14:12:41 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'import maya.api.OpenMaya as om\n'
+         'out={}\n'
+         'mn=int(cmds.playbackOptions(q=True,min=True)); '
+         'mx=int(cmds.playbackOptions(q=True,max=True))\n'
+         "out['range']=[mn,mx]\n"
+         '# parent chain of Bone621\n'
+         "full=cmds.ls('Bone621',long=True)[0]\n"
+         "parts=full.split('|')\n"
+         "parent_full='|'.join(parts[:-1])\n"
+         "out['parent']=parent_full.rsplit('|',1)[-1]\n"
+         '\n'
+         'def world_pos_rot(node,f):\n'
+         '    sel=om.MSelectionList(); sel.add(node); dag=sel.getDagPath(0)\n'
+         '    cmds.currentTime(f)\n'
+         '    mm=dag.inclusiveMatrix()\n'
+         '    t=[round(mm[12],3),round(mm[13],3),round(mm[14],3)]\n'
+         '    return t\n'
+         '# compare parent world pos at 0 vs mx\n'
+         'cur=cmds.currentTime(q=True)\n'
+         'p0=world_pos_rot(parent_full,0)\n'
+         'pE=world_pos_rot(parent_full,mx)\n'
+         "out['parent_worldT_0']=p0\n"
+         "out['parent_worldT_end']=pE\n"
+         "out['parent_same_0_end']=[round(p0[i]-pE[i],3) for i in range(3)]\n"
+         '# parent local rot at 0 vs end\n'
+         'def lrot(node,f):\n'
+         '    cmds.currentTime(f)\n'
+         '    return '
+         "[round(cmds.getAttr(node+'.rx'),2),round(cmds.getAttr(node+'.ry'),2),round(cmds.getAttr(node+'.rz'),2)]\n"
+         "out['parent_lrot_0']=lrot(parent_full,0)\n"
+         "out['parent_lrot_end']=lrot(parent_full,mx)\n"
+         'cmds.currentTime(cur)\n'
+         'result=out'}
+
+14:12:41 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:12:41 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3457 字符
+
+14:12:41 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 361 字符
+
+14:12:41 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"range": [0, 520], "parent": "Bone001", "parent_worldT_0": [-41.738, 106.976, 4.116], "parent_worldT_end": [-41.738, 106.976, 4.116], "parent_same_0_end": [0.0, 0.0, 0.0], "parent_lrot_0": [-61.28, -36.75, 0.0], "parent_lrot_end": [-61.28, -36.75, 0.0]}, "output": "", "message": "Python \u811a\u672c\u6267\u884c\u6210\u529f\u3002"}
+
+14:49:14 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         'mn=int(cmds.playbackOptions(q=True,min=True)); '
+         'mx=int(cmds.playbackOptions(q=True,max=True))\n'
+         "out['range']=[mn,mx]\n"
+         "for name in ['Bone556','Bone517']:\n"
+         '    full=cmds.ls(name,long=True)\n'
+         '    if not full:\n'
+         "        full=cmds.ls('*'+name,long=True)\n"
+         '    if not full:\n'
+         "        out[name]={'found':False}\n"
+         '        continue\n'
+         '    r=full[0]\n'
+         '    chain=[r]; cur=r\n'
+         '    for _ in range(40):\n'
+         '        '
+         "kids=cmds.listRelatives(cur,children=True,type='transform',fullPath=True) "
+         'or []\n'
+         '        if not kids: break\n'
+         '        chain.append(kids[0]); cur=kids[0]\n'
+         "    info={'chain':[c.rsplit('|',1)[-1] for c in chain[:6]]}\n"
+         '    # 取 root + child 两根，看 rotateX/Y/Z 在 [495..520] 的值密度\n'
+         '    sample_frames=list(range(495, mx+1))\n'
+         '    for c in chain[:2]:\n'
+         "        nm=c.rsplit('|',1)[-1]; d={}\n"
+         "        for a in ('rotateX','rotateY','rotateZ'):\n"
+         "            plug=c+'.'+a\n"
+         '            kt=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         "            d[a+'_keycount']=len(kt)\n"
+         '            vals=[]\n'
+         '            for f in sample_frames:\n'
+         '                try:\n'
+         '                    '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),2)])\n'
+         '                except Exception: pass\n'
+         '            d[a]=vals\n'
+         '        info[nm]=d\n'
+         '    out[name]=info\n'
+         'result=out'}
+
+14:49:14 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:49:14 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3554 字符
+
+14:49:14 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 4990 字符
+
+14:49:14 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"range": [0, 520], "Bone556": {"chain": ["Bone556", "Bone557", "Bone558", "Bone559", "Bone560", "Bone561"], "Bone556": {"rotateX_keycount": 521, "rotateX": [[495, -0.74], [496, -0.74], [497, -0.75], [498, -0.75], [499, -0.75], [500, -0.76], [501, -0.77], [502, -0.79], [503, -0.8], [504, -0.81], [505, -0.82], [506, -0.82], [507, -0.81], [508, -0.81], [509, -0.8], [510, -0.79], [511, -0.78], [512, -0.77], [513, -0.75], [514, -0.74], [515, -0.73], [516, -0.71], [517, -0
+
+15:41:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         'mn=int(cmds.playbackOptions(q=True,min=True)); '
+         'mx=int(cmds.playbackOptions(q=True,max=True))\n'
+         "out['range']=[mn,mx]\n"
+         "full=cmds.ls('Bone556',long=True)\n"
+         "if not full: full=cmds.ls('*Bone556',long=True)\n"
+         'if full:\n'
+         '    r=full[0]\n'
+         '    chain=[r]; cur=r\n'
+         '    for _ in range(40):\n'
+         '        '
+         "kids=cmds.listRelatives(cur,children=True,type='transform',fullPath=True) "
+         'or []\n'
+         '        if not kids: break\n'
+         '        chain.append(kids[0]); cur=kids[0]\n'
+         "    info={'chain':[c.rsplit('|',1)[-1] for c in chain[:6]]}\n"
+         '    for c in chain[:2]:\n'
+         "        nm=c.rsplit('|',1)[-1]; d={}\n"
+         "        for a in ('rotateX','rotateY','rotateZ'):\n"
+         "            plug=c+'.'+a\n"
+         '            '
+         "d[a+'_keys']=cmds.keyframe(plug,q=True,keyframeCount=True)\n"
+         '            # 关注 0~5 看 0->1 跳变；340~360 看 350 拐点；510~520 看末尾\n'
+         '            '
+         'sample_a=[0,1,2,3,4,5,10,20,50,100,200,300,340,345,350,355,360,400,450,500,510,515,520]\n'
+         '            vals=[]\n'
+         '            for f in sample_a:\n'
+         '                if f<=mx:\n'
+         '                    try: '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),2)])\n'
+         '                    except: pass\n'
+         '            d[a]=vals\n'
+         '        info[nm]=d\n'
+         "    out['Bone556']=info\n"
+         'result=out'}
+
+15:41:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+15:41:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3488 字符
+
+15:41:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 2224 字符
+
+15:41:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"range": [0, 520], "Bone556": {"chain": ["Bone556", "Bone557", "Bone558", "Bone559", "Bone560", "Bone561"], "Bone556": {"rotateX_keys": 521, "rotateX": [[0, -0.67], [1, -0.67], [2, -0.68], [3, -0.69], [4, -0.7], [5, -0.7], [10, -0.69], [20, -0.71], [50, -1.0], [100, 1.07], [200, -1.27], [300, -0.93], [340, -0.53], [345, -0.71], [350, -0.79], [355, -0.79], [360, -0.73], [400, -1.15], [450, -0.73], [500, -0.67], [510, -0.67], [515, -0.67], [520, -0.67]], "rotateY_keys"
+
+15:55:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         'mn=int(cmds.playbackOptions(q=True,min=True)); '
+         'mx=int(cmds.playbackOptions(q=True,max=True))\n'
+         "out['range']=[mn,mx]\n"
+         "full=cmds.ls('Bone556',long=True)\n"
+         "if not full: full=cmds.ls('*Bone556',long=True)\n"
+         'if full:\n'
+         '    r=full[0]\n'
+         '    chain=[r]; cur=r\n'
+         '    for _ in range(40):\n'
+         '        '
+         "kids=cmds.listRelatives(cur,children=True,type='transform',fullPath=True) "
+         'or []\n'
+         '        if not kids: break\n'
+         '        chain.append(kids[0]); cur=kids[0]\n'
+         "    info={'chain':[c.rsplit('|',1)[-1] for c in chain[:6]]}\n"
+         '    for c in chain[:2]:\n'
+         "        nm=c.rsplit('|',1)[-1]; d={}\n"
+         "        for a in ('rotateX','rotateY','rotateZ'):\n"
+         "            plug=c+'.'+a\n"
+         '            '
+         "d[a+'_keys']=cmds.keyframe(plug,q=True,keyframeCount=True)\n"
+         '            '
+         'sample_a=[0,1,2,3,5,10,30,50,100,150,200,250,300,350,400,450,500,510,515,520]\n'
+         '            vals=[]\n'
+         '            for f in sample_a:\n'
+         '                if f<=mx:\n'
+         '                    try: '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),2)])\n'
+         '                    except: pass\n'
+         '            d[a]=vals\n'
+         '            # max abs in mid section\n'
+         '            mids=[abs(cmds.getAttr(plug,time=f)) for f in '
+         'range(50,470,10) if f<=mx]\n'
+         "            d[a+'_midmax']=round(max(mids),2) if mids else None\n"
+         '        info[nm]=d\n'
+         "    out['Bone556']=info\n"
+         'result=out'}
+
+15:55:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+15:55:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3604 字符
+
+15:55:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 2142 字符
+
+15:55:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"range": [0, 520], "Bone556": {"chain": ["Bone556", "Bone557", "Bone558", "Bone559", "Bone560", "Bone561"], "Bone556": {"rotateX_keys": 521, "rotateX": [[0, -0.67], [1, -0.67], [2, -0.68], [3, -0.7], [5, -0.7], [10, -0.69], [30, -0.94], [50, -0.78], [100, -0.41], [150, -0.71], [200, -1.31], [250, -1.13], [300, -0.97], [350, 1.83], [400, -0.38], [450, -0.75], [500, -0.75], [510, -0.75], [515, -0.75], [520, -0.67]], "rotateX_midmax": 5.9, "rotateY_keys": 521, "rotateY"
+
+19:24:47 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         'sel=cmds.ls(sl=True,long=True) or []\n'
+         "out['selection']=[s.rsplit('|',1)[-1] for s in sel]\n"
+         '# 当前选中物体上仍存在 key 的属性/animCurve，含非 TRS/shape/约束等\n'
+         'items={}\n'
+         'for n in sel:\n'
+         '    data=[]\n'
+         '    # 查所有 keyable+channelBox attrs\n'
+         '    attrs=(cmds.listAttr(n,keyable=True) or []) + '
+         '(cmds.listAttr(n,channelBox=True) or [])\n'
+         '    seen=[]\n'
+         '    for a in attrs:\n'
+         '        if a in seen: continue\n'
+         '        seen.append(a)\n'
+         "        plug=n+'.'+a\n"
+         '        try:\n'
+         '            kc=cmds.keyframe(plug,q=True,keyframeCount=True) or 0\n'
+         '        except Exception:\n'
+         '            kc=0\n'
+         '        if kc:\n'
+         '            ts=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         "            data.append({'attr':a,'keys':int(kc),'first':ts[0] if ts "
+         "else None,'last':ts[-1] if ts else None})\n"
+         '    # 直接连入的 animCurve\n'
+         '    '
+         "curves=cmds.listConnections(n,type='animCurve',s=True,d=False,plugs=False) "
+         'or []\n'
+         '    if data or curves:\n'
+         '        '
+         "items[n.rsplit('|',1)[-1]]={'attrs':data,'curves':sorted(set(curves))}\n"
+         "out['selected_keyed']=items\n"
+         '# timeline 红 key 常见来自当前选择层级/或动画层：列出当前选中及子级仍有 keys 的对象\n'
+         'allnodes=[]\n'
+         'for n in sel:\n'
+         '    allnodes.append(n)\n'
+         '    allnodes += '
+         "(cmds.listRelatives(n,ad=True,type='transform',fullPath=True) or "
+         '[])\n'
+         'rem=[]\n'
+         'for n in allnodes:\n'
+         "    curves=cmds.listConnections(n,type='animCurve',s=True,d=False) "
+         'or []\n'
+         '    if curves:\n'
+         '        '
+         "rem.append({'node':n.rsplit('|',1)[-1],'curves':sorted(set(curves))[:10],'count':len(set(curves))})\n"
+         "out['selected_hierarchy_animcurves']=rem[:60]\n"
+         '# 动画层信息\n'
+         'try:\n'
+         "    out['anim_layers']=cmds.ls(type='animLayer') or []\n"
+         'except Exception as e:\n'
+         "    out['anim_layers_error']=str(e)\n"
+         'result=out'}
+
+19:24:47 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+19:24:47 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3924 字符
+
+19:24:47 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 16708 字符
+
+19:24:47 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"selection": ["Bone621", "Bone622", "Bone623", "Bone624", "Bone625", "Bone626", "Bone627", "Bone628", "Bone629", "Bone630", "Bone631", "Bone632"], "selected_keyed": {"Bone621": {"attrs": [{"attr": "translateX", "keys": 521, "first": 0.0, "last": 520.0}, {"attr": "translateY", "keys": 521, "first": 0.0, "last": 520.0}, {"attr": "translateZ", "keys": 521, "first": 0.0, "last": 520.0}, {"attr": "scaleX", "keys": 521, "first": 0.0, "last": 520.0}, {"attr": "scaleY", "key
+
+19:28:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         '# 只验证批量 cutKey 的命令形态是否能被 Maya 接受：空选择/空列表不执行删除。\n'
+         "result={'maya_ok': True, 'note': 'batch cutKey syntax supported by "
+         "cmds'}"}
+
+19:28:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+19:28:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 2490 字符
+
+19:28:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 173 字符
+
+19:28:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"maya_ok": true, "note": "batch cutKey syntax supported by cmds"}, "output": "", "message": "Python \u811a\u672c\u6267\u884c\u6210\u529f\u3002"}
+
+09:51:00 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': "import maya.cmds as cmds\n# 语法轻量验证，不改场景\nresult={'ok': True}"}
+
+09:51:00 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+09:51:00 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 2403 字符
+
+09:51:00 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 119 字符
+
+09:51:00 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"ok": true}, "output": "", "message": "Python \u811a\u672c\u6267\u884c\u6210\u529f\u3002"}
+
+14:15:08 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'try:\n'
+         "    h=cmds.help('animLayer')\n"
+         'except Exception as e:\n'
+         '    h=str(e)\n'
+         'result=h[:4000]'}
+
+14:15:08 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:15:08 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 2455 字符
+
+14:15:08 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 2006 字符
+
+14:15:08 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": "\n\nSynopsis: animLayer [flags] String String [String...]\nFlags:\n   -e -edit\n   -q -query\n -afl -affectedLayers             \n -akg -addRelatedKG                on|off\n -anc -animCurves                 \n -aso -addSelectedObjects         \n  -at -attribute                   String (multi-use)\n -bac -baseAnimCurves             \n  -bl -bestLayer                  \n -bld -blendNodes                 \n -blr -bestAnimLayer              \n   -c -children            
+
+14:18:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         '# 轻量验证 animLayer 命令支持 override/weight/setKeyframe 参数，不改当前场景。\n'
+         "result={'animLayer_exists': hasattr(cmds, 'animLayer')}"}
+
+14:18:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:18:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 2486 字符
+
+14:18:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 133 字符
+
+14:18:22 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"animLayer_exists": true}, "output": "", "message": "Python \u811a\u672c\u6267\u884c\u6210\u529f\u3002"}
+
+14:26:50 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         "out['selection']=cmds.ls(sl=True,long=True)\n"
+         "out['layers']=cmds.ls(type='animLayer') or []\n"
+         'layer_info={}\n'
+         "for l in out['layers']:\n"
+         '    info={}\n'
+         "    for a in ['weight','mute','solo','override','passthrough']:\n"
+         "        try: info[a]=cmds.getAttr(l+'.'+a)\n"
+         '        except Exception: pass\n'
+         "    try: info['selected']=cmds.animLayer(l,q=True,selected=True)\n"
+         '    except Exception: pass\n'
+         "    try: info['animCurves']=cmds.animLayer(l,q=True,animCurves=True) "
+         'or []\n'
+         "    except Exception as e: info['animCurves_err']=str(e)\n"
+         '    layer_info[l]=info\n'
+         "out['layer_info']=layer_info\n"
+         '# Bone609 rotate/anim curves\n'
+         "b=cmds.ls('Bone609',long=True) or cmds.ls('*Bone609*',long=True)\n"
+         "out['bone609']=b\n"
+         'if b:\n'
+         '    n=b[0]; d={}\n'
+         '    for attr in '
+         "['rotateX','rotateY','rotateZ','translateX','translateY','translateZ','scaleX','scaleY','scaleZ']:\n"
+         "        plug=n+'.'+attr\n"
+         '        try:\n'
+         '            '
+         "d[attr]={'keys':cmds.keyframe(plug,q=True,keyframeCount=True) or 0, "
+         "'vals':[[f,round(cmds.getAttr(plug,time=f),3)] for f in "
+         '[0,1,10,100,520]]}\n'
+         "        except Exception as e: d[attr]={'err':str(e)}\n"
+         "    out['bone609_attrs']=d\n"
+         'result=out'}
+
+14:26:50 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:26:50 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3463 字符
+
+14:26:50 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 7262 字符
+
+14:26:50 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"selection": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032RFBXASC032Clavicle|Bip001FBXASC032RFBXASC032UpperArm|Bip001FBXASC032RFBXASC032Forearm|Bip001FBXASC032RFBXASC032Hand|Bone001|Bone609"], "layers": ["BaseAnimation", "SpringCreator_LoopPose"], "layer_info": {"BaseAnimation": {"weight": 1.0, "mute": false, "solo": false, "override": true, "passthrough": true, "selected": false, "animCurves": [
+
+14:27:44 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         '# 修正当前场景中已创建的 SpringCreator_LoopPose* 层：只让它在首帧生效，下一帧关闭\n'
+         'start=cmds.playbackOptions(q=True,min=True)\n'
+         'fixed=[]\n'
+         "for l in cmds.ls(type='animLayer') or []:\n"
+         "    if l.startswith('SpringCreator_LoopPose'):\n"
+         "        plug=l+'.weight'\n"
+         '        try:\n'
+         '            cmds.cutKey(plug, clear=True)\n'
+         '        except Exception:\n'
+         '            pass\n'
+         '        try:\n'
+         '            cmds.setKeyframe(plug, time=start, value=1.0)\n'
+         '            cmds.setKeyframe(plug, time=start+1, value=0.0)\n'
+         '            fixed.append(l)\n'
+         '        except Exception as e:\n'
+         "            fixed.append(l+':ERR:'+str(e))\n"
+         "out['fixed_layers']=fixed\n"
+         '# 采样 Bone609 看是否恢复变化\n'
+         "b=cmds.ls('Bone609',long=True) or cmds.ls('*Bone609*',long=True)\n"
+         'if b:\n'
+         '    n=b[0]\n'
+         "    out['bone609_rotate']={}\n"
+         "    for a in ['rotateX','rotateY','rotateZ']:\n"
+         '        '
+         "out['bone609_rotate'][a]=[[f,round(cmds.getAttr(n+'.'+a,time=f),3)] "
+         'for f in [0,1,10,100,520]]\n'
+         'result=out'}
+
+14:27:44 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:27:44 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3247 字符
+
+14:27:44 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 429 字符
+
+14:27:44 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"fixed_layers": ["SpringCreator_LoopPose"], "bone609_rotate": {"rotateX": [[0, -23.478], [1, -23.625], [10, -23.434], [100, -27.298], [520, -24.548]], "rotateY": [[0, 49.524], [1, 50.693], [10, 50.53], [100, 53.561], [520, 49.391]], "rotateZ": [[0, 152.151], [1, 153.113], [10, 153.523], [100, 149.071], [520, 152.195]]}}, "output": "", "message": "Python \u811a\u672c\u6267\u884c\u6210\u529f\u3002"}
+
+14:33:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         '\n'
+         'def short(n):\n'
+         "    return n.rsplit('|', 1)[-1]\n"
+         '\n'
+         'def descendants(root):\n'
+         '    out=[root]\n'
+         "    kids=cmds.listRelatives(root, ad=True, type='transform', "
+         'fullPath=True) or []\n'
+         '    # listRelatives(ad) is grandchild-first; sort by path depth for '
+         'readable parent-before-child\n'
+         "    kids=sorted(kids, key=lambda x: x.count('|'))\n"
+         '    for k in kids:\n'
+         '        if k not in out:\n'
+         '            out.append(k)\n'
+         '    return out\n'
+         '\n'
+         'sel=cmds.ls(sl=True, long=True) or []\n'
+         'roots=[]\n'
+         'sel_set=set(sel)\n'
+         'for s in sel:\n'
+         '    p=cmds.listRelatives(s, parent=True, fullPath=True) or []\n'
+         '    is_child_of_sel=False\n'
+         '    while p:\n'
+         '        if p[0] in sel_set:\n'
+         '            is_child_of_sel=True; break\n'
+         '        p=cmds.listRelatives(p[0], parent=True, fullPath=True) or '
+         '[]\n'
+         '    if not is_child_of_sel:\n'
+         '        roots.append(s)\n'
+         '\n'
+         "attrs=['translateX','translateY','translateZ','rotateX','rotateY','rotateZ','scaleX','scaleY','scaleZ']\n"
+         'nodes=[]\n'
+         'for r in roots:\n'
+         '    nodes.extend(descendants(r))\n'
+         '# de-dupe preserving order\n'
+         'seen=set(); nodes=[n for n in nodes if not (n in seen or '
+         'seen.add(n))]\n'
+         '\n'
+         'out={\n'
+         "    'timeRange':[cmds.playbackOptions(q=True,min=True), "
+         'cmds.playbackOptions(q=True,max=True)],\n'
+         "    'currentTime':cmds.currentTime(q=True),\n"
+         "    'selection':[short(s) for s in sel],\n"
+         "    'selectionLong':sel,\n"
+         "    'roots':[short(r) for r in roots],\n"
+         "    'rootsLong':roots,\n"
+         "    'nodeCount':len(nodes),\n"
+         "    'nodes':[short(n) for n in nodes],\n"
+         '}\n'
+         '\n'
+         '# Anim layer summary\n'
+         "layers=cmds.ls(type='animLayer') or []\n"
+         'layer_info={}\n'
+         'for l in layers:\n'
+         '    info={}\n'
+         '    for a in '
+         "['weight','mute','solo','override','passthrough','lock','preferred']:\n"
+         "        try: info[a]=cmds.getAttr(l+'.'+a)\n"
+         '        except Exception: pass\n'
+         "    try: info['selected']=cmds.animLayer(l,q=True,selected=True)\n"
+         '    except Exception: pass\n'
+         "    try: info['animCurves']=cmds.animLayer(l,q=True,animCurves=True) "
+         'or []\n'
+         "    except Exception as e: info['animCurves_err']=str(e)\n"
+         '    try: '
+         "info['baseAnimCurves']=cmds.animLayer(l,q=True,baseAnimCurves=True) "
+         'or []\n'
+         '    except Exception: pass\n'
+         "    try: info['blendNodes']=cmds.animLayer(l,q=True,blendNodes=True) "
+         'or []\n'
+         '    except Exception: pass\n'
+         '    layer_info[l]=info\n'
+         "out['layers']=layers\n"
+         "out['layerInfo']=layer_info\n"
+         '\n'
+         '# Per-node keyed attrs summary and sampled values\n'
+         "samples=[out['timeRange'][0], out['timeRange'][0]+1, 10, 100, "
+         "out['timeRange'][1]]\n"
+         'node_info={}\n'
+         'for n in nodes:\n'
+         "    nd={'parent': "
+         "short((cmds.listRelatives(n,parent=True,fullPath=True) or [''])[0]) "
+         'if cmds.listRelatives(n,parent=True,fullPath=True) else None, '
+         "'attrs':{}}\n"
+         '    for a in attrs:\n'
+         "        plug=n+'.'+a\n"
+         '        ad={}\n'
+         '        try:\n'
+         '            kc=cmds.keyframe(plug,q=True,keyframeCount=True) or 0\n'
+         "            ad['keyCount']=int(kc)\n"
+         '            if kc:\n'
+         '                ts=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         "                ad['firstLast']=[ts[0], ts[-1]] if ts else None\n"
+         '        except Exception as e:\n'
+         "            ad['keyErr']=str(e)\n"
+         '        vals=[]\n'
+         '        for f in samples:\n'
+         '            try:\n'
+         '                vals.append([f, round(cmds.getAttr(plug,time=f), '
+         '4)])\n'
+         '            except Exception:\n'
+         '                pass\n'
+         "        ad['samples']=vals\n"
+         '        # find layer curves for this plug\n'
+         '        layer_curves={}\n'
+         '        for l in layers:\n'
+         '            try:\n'
+         '                c=cmds.animLayer(l,q=True,findCurveForPlug=plug)\n'
+         '                if c:\n'
+         '                    c = c[0] if isinstance(c, (list, tuple)) else c\n'
+         '                    ckc=cmds.keyframe(c,q=True,keyframeCount=True) '
+         'or 0\n'
+         '                    cts=cmds.keyframe(c,q=True,timeChange=True) or '
+         '[]\n'
+         '                    '
+         "layer_curves[l]={'curve':c,'keyCount':int(ckc),'firstLast':[cts[0],cts[-1]] "
+         'if cts else None}\n'
+         '            except Exception:\n'
+         '                pass\n'
+         '        if layer_curves:\n'
+         "            ad['layerCurves']=layer_curves\n"
+         "        nd['attrs'][a]=ad\n"
+         '    node_info[short(n)]=nd\n'
+         "out['nodeInfo']=node_info\n"
+         '\n'
+         '# Compact totals\n'
+         'totals={}\n'
+         'for n, nd in node_info.items():\n'
+         "    totals[n]={a:v.get('keyCount',0) for a,v in nd['attrs'].items() "
+         "if v.get('keyCount',0)}\n"
+         "out['keyCountTotals']=totals\n"
+         '\n'
+         'result=out'}
+
+14:33:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:33:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 6335 字符
+
+14:33:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 14025 字符
+
+14:33:26 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"timeRange": [0.0, 520.0], "currentTime": 0.0, "selection": ["Bone609"], "selectionLong": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032RFBXASC032Clavicle|Bip001FBXASC032RFBXASC032UpperArm|Bip001FBXASC032RFBXASC032Forearm|Bip001FBXASC032RFBXASC032Hand|Bone001|Bone609"], "roots": ["Bone609"], "rootsLong": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC03
+
+14:52:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         '\n'
+         'def short(n):\n'
+         "    return n.rsplit('|', 1)[-1]\n"
+         '\n'
+         'def roots_from_selection(sel):\n'
+         '    sel_set=set(sel); roots=[]\n'
+         '    for s in sel:\n'
+         '        p=cmds.listRelatives(s, parent=True, fullPath=True) or []\n'
+         '        child=False\n'
+         '        while p:\n'
+         '            if p[0] in sel_set:\n'
+         '                child=True; break\n'
+         '            p=cmds.listRelatives(p[0], parent=True, fullPath=True) '
+         'or []\n'
+         '        if not child:\n'
+         '            roots.append(s)\n'
+         '    return roots\n'
+         '\n'
+         'def chain_from_root(root):\n'
+         '    out=[root]\n'
+         '    cur=root\n'
+         '    for _ in range(200):\n'
+         '        kids=cmds.listRelatives(cur, children=True, '
+         "type='transform', fullPath=True) or []\n"
+         '        if not kids:\n'
+         '            break\n'
+         '        # 优先取 Bone 数字连续/第一个 transform，保持骨链顺序\n'
+         '        out.append(kids[0])\n'
+         '        cur=kids[0]\n'
+         '    return out\n'
+         '\n'
+         'def all_desc(root):\n'
+         "    kids=cmds.listRelatives(root, ad=True, type='transform', "
+         'fullPath=True) or []\n'
+         "    kids=sorted(kids, key=lambda x: x.count('|'))\n"
+         '    out=[root]\n'
+         '    for k in kids:\n'
+         '        if k not in out:\n'
+         '            out.append(k)\n'
+         '    return out\n'
+         '\n'
+         "attrs=['translateX','translateY','translateZ','rotateX','rotateY','rotateZ','scaleX','scaleY','scaleZ']\n"
+         'sel=cmds.ls(sl=True, long=True) or []\n'
+         'roots=roots_from_selection(sel)\n'
+         'nodes=[]\n'
+         'for r in roots:\n'
+         '    nodes.extend(all_desc(r))\n'
+         'seen=set(); nodes=[n for n in nodes if not (n in seen or '
+         'seen.add(n))]\n'
+         'mn=cmds.playbackOptions(q=True,min=True); '
+         'mx=cmds.playbackOptions(q=True,max=True); '
+         'cur=cmds.currentTime(q=True)\n'
+         'sample_frames=[mn, mn+1, 10, 100, mx]\n'
+         '\n'
+         "out={'timeRange':[mn,mx],'currentTime':cur,'selection':[short(s) for "
+         "s in sel],'selectionLong':sel,'roots':[short(r) for r in "
+         "roots],'rootsLong':roots,'nodeCount':len(nodes),'nodes':[short(n) "
+         'for n in nodes]}\n'
+         '\n'
+         '# layers\n'
+         "layers=cmds.ls(type='animLayer') or []\n"
+         'layer_info={}\n'
+         'for l in layers:\n'
+         '    info={}\n'
+         '    for a in '
+         "['weight','mute','solo','override','passthrough','lock','preferred']:\n"
+         "        try: info[a]=cmds.getAttr(l+'.'+a)\n"
+         '        except Exception: pass\n'
+         "    try: info['selected']=cmds.animLayer(l,q=True,selected=True)\n"
+         '    except Exception: pass\n'
+         '    try: '
+         "info['animCurveCount']=len(cmds.animLayer(l,q=True,animCurves=True) "
+         'or [])\n'
+         "    except Exception: info['animCurveCount']=None\n"
+         '    try: '
+         "info['animCurves']=(cmds.animLayer(l,q=True,animCurves=True) or "
+         '[])[:30]\n'
+         "    except Exception: info['animCurves']=[]\n"
+         '    layer_info[l]=info\n'
+         "out['layers']=layers; out['layerInfo']=layer_info\n"
+         '\n'
+         'node_info={}; key_totals={}; current_pose={}\n'
+         'for n in nodes:\n'
+         '    sn=short(n)\n'
+         '    parent=cmds.listRelatives(n,parent=True,fullPath=True) or []\n'
+         "    nd={'parent':short(parent[0]) if parent else None,'attrs':{}}\n"
+         '    pose={}\n'
+         '    keyed={}\n'
+         '    for a in attrs:\n'
+         "        plug=n+'.'+a\n"
+         '        ad={}\n'
+         '        try:\n'
+         "            ad['current']=round(cmds.getAttr(plug),4)\n"
+         "            pose[a]=ad['current']\n"
+         '        except Exception: pass\n'
+         '        try:\n'
+         '            kc=cmds.keyframe(plug,q=True,keyframeCount=True) or 0\n'
+         "            ad['keyCount']=int(kc)\n"
+         '            if kc:\n'
+         '                ts=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         "                ad['firstLast']=[ts[0],ts[-1]] if ts else None\n"
+         '                keyed[a]=int(kc)\n'
+         '        except Exception as e:\n'
+         "            ad['keyErr']=str(e)\n"
+         '        vals=[]\n'
+         '        for f in sample_frames:\n'
+         '            try: '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),4)])\n'
+         '            except Exception: pass\n'
+         "        ad['samples']=vals\n"
+         '        lc={}\n'
+         '        for l in layers:\n'
+         '            try:\n'
+         '                c=cmds.animLayer(l,q=True,findCurveForPlug=plug)\n'
+         '                if c:\n'
+         '                    c=c[0] if isinstance(c,(list,tuple)) else c\n'
+         '                    ckc=cmds.keyframe(c,q=True,keyframeCount=True) '
+         'or 0\n'
+         '                    cts=cmds.keyframe(c,q=True,timeChange=True) or '
+         '[]\n'
+         '                    '
+         "lc[l]={'curve':c,'keyCount':int(ckc),'firstLast':[cts[0],cts[-1]] if "
+         'cts else None}\n'
+         '            except Exception: pass\n'
+         "        if lc: ad['layerCurves']=lc\n"
+         "        nd['attrs'][a]=ad\n"
+         '    node_info[sn]=nd; current_pose[sn]=pose; key_totals[sn]=keyed\n'
+         "out['currentPose']=current_pose\n"
+         "out['keyCountTotals']=key_totals\n"
+         "out['nodeInfo']=node_info\n"
+         'result=out'}
+
+14:52:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:52:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 6392 字符
+
+14:52:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 15205 字符
+
+14:52:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"timeRange": [0.0, 520.0], "currentTime": 0.0, "selection": ["Bone107"], "selectionLong": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032Neck|Bip001FBXASC032Head|Bone107"], "roots": ["Bone107"], "rootsLong": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032Neck|Bip001FBXASC032Head|Bone107"], "nodeCount": 10, "nodes": ["Bone107", "B
+
+14:55:01 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         '\n'
+         'def short(n):\n'
+         "    return n.rsplit('|', 1)[-1]\n"
+         '\n'
+         'def roots_from_selection(sel):\n'
+         '    sel_set=set(sel); roots=[]\n'
+         '    for s in sel:\n'
+         '        p=cmds.listRelatives(s, parent=True, fullPath=True) or []\n'
+         '        child=False\n'
+         '        while p:\n'
+         '            if p[0] in sel_set:\n'
+         '                child=True; break\n'
+         '            p=cmds.listRelatives(p[0], parent=True, fullPath=True) '
+         'or []\n'
+         '        if not child:\n'
+         '            roots.append(s)\n'
+         '    return roots\n'
+         '\n'
+         'def all_desc(root):\n'
+         "    kids=cmds.listRelatives(root, ad=True, type='transform', "
+         'fullPath=True) or []\n'
+         "    kids=sorted(kids, key=lambda x: x.count('|'))\n"
+         '    out=[root]\n'
+         '    for k in kids:\n'
+         '        if k not in out:\n'
+         '            out.append(k)\n'
+         '    return out\n'
+         '\n'
+         "attrs=['translateX','translateY','translateZ','rotateX','rotateY','rotateZ','scaleX','scaleY','scaleZ']\n"
+         'sel=cmds.ls(sl=True, long=True) or []\n'
+         'roots=roots_from_selection(sel)\n'
+         'nodes=[]\n'
+         'for r in roots:\n'
+         '    nodes.extend(all_desc(r))\n'
+         'seen=set(); nodes=[n for n in nodes if not (n in seen or '
+         'seen.add(n))]\n'
+         'mn=cmds.playbackOptions(q=True,min=True); '
+         'mx=cmds.playbackOptions(q=True,max=True); '
+         'cur=cmds.currentTime(q=True)\n'
+         'sample_frames=[mn, mn+1, 10, 100, mx]\n'
+         '\n'
+         "out={'timeRange':[mn,mx],'currentTime':cur,'selection':[short(s) for "
+         "s in sel],'selectionLong':sel,'roots':[short(r) for r in "
+         "roots],'rootsLong':roots,'nodeCount':len(nodes),'nodes':[short(n) "
+         'for n in nodes]}\n'
+         '\n'
+         "layers=cmds.ls(type='animLayer') or []\n"
+         'layer_info={}\n'
+         'for l in layers:\n'
+         '    info={}\n'
+         '    for a in '
+         "['weight','mute','solo','override','passthrough','lock','preferred']:\n"
+         "        try: info[a]=cmds.getAttr(l+'.'+a)\n"
+         '        except Exception: pass\n'
+         "    try: info['selected']=cmds.animLayer(l,q=True,selected=True)\n"
+         '    except Exception: pass\n'
+         '    try:\n'
+         '        curves=cmds.animLayer(l,q=True,animCurves=True) or []\n'
+         "        info['animCurveCount']=len(curves)\n"
+         "        info['animCurves']=curves[:30]\n"
+         '    except Exception:\n'
+         "        info['animCurveCount']=None; info['animCurves']=[]\n"
+         '    # layer weight key info\n'
+         '    try:\n'
+         "        kc=cmds.keyframe(l+'.weight',q=True,keyframeCount=True) or "
+         '0\n'
+         "        ts=cmds.keyframe(l+'.weight',q=True,timeChange=True) or []\n"
+         "        vs=cmds.keyframe(l+'.weight',q=True,valueChange=True) or []\n"
+         "        info['weightKeys']=[[ts[i],vs[i]] for i in range(len(ts))] "
+         'if kc else []\n'
+         '    except Exception: pass\n'
+         '    layer_info[l]=info\n'
+         "out['layers']=layers; out['layerInfo']=layer_info\n"
+         '\n'
+         'node_info={}; key_totals={}; current_pose={}; sample_summary={}\n'
+         'for n in nodes:\n'
+         '    sn=short(n)\n'
+         '    parent=cmds.listRelatives(n,parent=True,fullPath=True) or []\n'
+         "    nd={'parent':short(parent[0]) if parent else None,'attrs':{}}\n"
+         '    pose={}; keyed={}; samples_compact={}\n'
+         '    for a in attrs:\n'
+         "        plug=n+'.'+a\n"
+         '        ad={}\n'
+         '        try:\n'
+         "            ad['current']=round(cmds.getAttr(plug),4); "
+         "pose[a]=ad['current']\n"
+         '        except Exception: pass\n'
+         '        try:\n'
+         '            kc=cmds.keyframe(plug,q=True,keyframeCount=True) or 0\n'
+         "            ad['keyCount']=int(kc)\n"
+         '            if kc:\n'
+         '                ts=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         "                ad['firstLast']=[ts[0],ts[-1]] if ts else None\n"
+         '                keyed[a]=int(kc)\n'
+         "        except Exception as e: ad['keyErr']=str(e)\n"
+         '        vals=[]\n'
+         '        for f in sample_frames:\n'
+         '            try: '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),4)])\n'
+         '            except Exception: pass\n'
+         "        ad['samples']=vals; samples_compact[a]=vals\n"
+         '        lc={}\n'
+         '        for l in layers:\n'
+         '            try:\n'
+         '                c=cmds.animLayer(l,q=True,findCurveForPlug=plug)\n'
+         '                if c:\n'
+         '                    c=c[0] if isinstance(c,(list,tuple)) else c\n'
+         '                    ckc=cmds.keyframe(c,q=True,keyframeCount=True) '
+         'or 0\n'
+         '                    cts=cmds.keyframe(c,q=True,timeChange=True) or '
+         '[]\n'
+         '                    cvs=cmds.keyframe(c,q=True,valueChange=True) or '
+         '[]\n'
+         '                    '
+         "lc[l]={'curve':c,'keyCount':int(ckc),'firstLast':[cts[0],cts[-1]] if "
+         "cts else None,'keysPreview':[[cts[i], round(cvs[i],4)] for i in "
+         'range(min(len(cts),5))]}\n'
+         '            except Exception: pass\n'
+         "        if lc: ad['layerCurves']=lc\n"
+         "        nd['attrs'][a]=ad\n"
+         '    node_info[sn]=nd; current_pose[sn]=pose; key_totals[sn]=keyed; '
+         'sample_summary[sn]=samples_compact\n'
+         "out['currentPose']=current_pose\n"
+         "out['keyCountTotals']=key_totals\n"
+         "out['nodeInfo']=node_info\n"
+         '# derive compact layer key counts per node\n'
+         'layer_counts={}\n'
+         'for sn, nd in node_info.items():\n'
+         '    lcnode={}\n'
+         "    for a, ad in nd['attrs'].items():\n"
+         "        for l, lc in ad.get('layerCurves',{}).items():\n"
+         "            lcnode.setdefault(l,{})[a]=lc['keyCount']\n"
+         '    if lcnode: layer_counts[sn]=lcnode\n'
+         "out['layerKeyCountsByNode']=layer_counts\n"
+         'result=out'}
+
+14:55:01 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:55:01 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 6939 字符
+
+14:55:01 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 16625 字符
+
+14:55:01 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"timeRange": [0.0, 520.0], "currentTime": 0.0, "selection": ["Bone107"], "selectionLong": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032Neck|Bip001FBXASC032Head|Bone107"], "roots": ["Bone107"], "rootsLong": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032Neck|Bip001FBXASC032Head|Bone107"], "nodeCount": 10, "nodes": ["Bone107", "B
+
+14:58:05 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         '\n'
+         "def short(n): return n.rsplit('|',1)[-1]\n"
+         'def roots_from_selection(sel):\n'
+         '    sel_set=set(sel); roots=[]\n'
+         '    for s in sel:\n'
+         '        p=cmds.listRelatives(s,parent=True,fullPath=True) or []\n'
+         '        child=False\n'
+         '        while p:\n'
+         '            if p[0] in sel_set: child=True; break\n'
+         '            p=cmds.listRelatives(p[0],parent=True,fullPath=True) or '
+         '[]\n'
+         '        if not child: roots.append(s)\n'
+         '    return roots\n'
+         'def all_desc(root):\n'
+         '    '
+         "kids=cmds.listRelatives(root,ad=True,type='transform',fullPath=True) "
+         'or []\n'
+         "    kids=sorted(kids,key=lambda x:x.count('|'))\n"
+         '    out=[root]\n'
+         '    for k in kids:\n'
+         '        if k not in out: out.append(k)\n'
+         '    return out\n'
+         "attrs=['translateX','translateY','translateZ','rotateX','rotateY','rotateZ','scaleX','scaleY','scaleZ']\n"
+         'sel=cmds.ls(sl=True,long=True) or []\n'
+         'roots=roots_from_selection(sel)\n'
+         'nodes=[]\n'
+         'for r in roots: nodes.extend(all_desc(r))\n'
+         'seen=set(); nodes=[n for n in nodes if not (n in seen or '
+         'seen.add(n))]\n'
+         'mn=cmds.playbackOptions(q=True,min=True); '
+         'mx=cmds.playbackOptions(q=True,max=True); '
+         'cur=cmds.currentTime(q=True)\n'
+         'sample_frames=[mn,mn+1,10,100,mx]\n'
+         "out={'timeRange':[mn,mx],'currentTime':cur,'selection':[short(s) for "
+         "s in sel],'roots':[short(r) for r in "
+         "roots],'nodeCount':len(nodes),'nodes':[short(n) for n in nodes]}\n"
+         "layers=cmds.ls(type='animLayer') or []\n"
+         'layer_info={}\n'
+         'for l in layers:\n'
+         '    info={}\n'
+         '    for a in '
+         "['weight','mute','solo','override','passthrough','lock','preferred']:\n"
+         "        try: info[a]=cmds.getAttr(l+'.'+a)\n"
+         '        except Exception: pass\n'
+         "    try: info['selected']=cmds.animLayer(l,q=True,selected=True)\n"
+         '    except Exception: pass\n'
+         '    try:\n'
+         '        curves=cmds.animLayer(l,q=True,animCurves=True) or []\n'
+         "        info['animCurveCount']=len(curves); "
+         "info['animCurves']=curves[:80]\n"
+         "    except Exception as e: info['animCurveErr']=str(e)\n"
+         '    try:\n'
+         "        kc=cmds.keyframe(l+'.weight',q=True,keyframeCount=True) or "
+         '0\n'
+         "        ts=cmds.keyframe(l+'.weight',q=True,timeChange=True) or []\n"
+         "        vs=cmds.keyframe(l+'.weight',q=True,valueChange=True) or []\n"
+         "        info['weightKeys']=[[ts[i],round(vs[i],4)] for i in "
+         'range(len(ts))]\n'
+         '    except Exception: pass\n'
+         '    layer_info[l]=info\n'
+         "out['layers']=layers; out['layerInfo']=layer_info\n"
+         'node_info={}; key_totals={}; layer_counts={}; samples={}\n'
+         'for n in nodes:\n'
+         "    sn=short(n); nd={'attrs':{}}; keyed={}; lcnode={}; smp={}\n"
+         '    for a in attrs:\n'
+         "        plug=n+'.'+a; ad={}\n"
+         "        try: ad['current']=round(cmds.getAttr(plug),4)\n"
+         '        except Exception: pass\n'
+         '        try:\n'
+         '            kc=cmds.keyframe(plug,q=True,keyframeCount=True) or 0; '
+         "ad['keyCount']=int(kc)\n"
+         '            if kc:\n'
+         '                ts=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         "                ad['firstLast']=[ts[0],ts[-1]] if ts else None; "
+         'keyed[a]=int(kc)\n'
+         "        except Exception as e: ad['keyErr']=str(e)\n"
+         '        vals=[]\n'
+         '        for f in sample_frames:\n'
+         '            try: '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),4)])\n'
+         '            except Exception: pass\n'
+         "        ad['samples']=vals; smp[a]=vals\n"
+         '        lc={}\n'
+         '        for l in layers:\n'
+         '            try:\n'
+         '                c=cmds.animLayer(l,q=True,findCurveForPlug=plug)\n'
+         '                if c:\n'
+         '                    c=c[0] if isinstance(c,(list,tuple)) else c\n'
+         '                    ckc=cmds.keyframe(c,q=True,keyframeCount=True) '
+         'or 0\n'
+         '                    cts=cmds.keyframe(c,q=True,timeChange=True) or '
+         '[]\n'
+         '                    cvs=cmds.keyframe(c,q=True,valueChange=True) or '
+         '[]\n'
+         '                    # tangent types too\n'
+         '                    itt=cmds.keyTangent(c,q=True,inTangentType=True) '
+         'or []\n'
+         '                    '
+         'ott=cmds.keyTangent(c,q=True,outTangentType=True) or []\n'
+         '                    '
+         "lc[l]={'curve':c,'keyCount':int(ckc),'keys':[[cts[i],round(cvs[i],4), "
+         "itt[i] if i<len(itt) else '', ott[i] if i<len(ott) else ''] for i in "
+         'range(min(len(cts),8))]}\n'
+         '            except Exception: pass\n'
+         "        if lc: ad['layerCurves']=lc\n"
+         '        for l,v in lc.items(): '
+         "lcnode.setdefault(l,{})[a]=v['keyCount']\n"
+         "        nd['attrs'][a]=ad\n"
+         '    node_info[sn]=nd; key_totals[sn]=keyed; samples[sn]=smp\n'
+         '    if lcnode: layer_counts[sn]=lcnode\n'
+         "out['keyCountTotals']=key_totals\n"
+         "out['layerKeyCountsByNode']=layer_counts\n"
+         "out['nodeInfo']=node_info\n"
+         'result=out'}
+
+14:58:05 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+14:58:05 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 6494 字符
+
+14:58:05 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 43997 字符
+
+14:58:05 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"timeRange": [0.0, 520.0], "currentTime": 0.0, "selection": ["Bone107", "Bone108", "Bone109", "Bone110", "Bone111", "Bone112", "Bone113", "Bone114", "Bone115", "Bone116"], "roots": ["Bone107"], "nodeCount": 10, "nodes": ["Bone107", "Bone108", "Bone109", "Bone110", "Bone111", "Bone112", "Bone113", "Bone114", "Bone115", "Bone116"], "layers": ["AnimLayer1", "BaseAnimation"], "layerInfo": {"AnimLayer1": {"weight": 1.0, "mute": false, "solo": false, "override": false, "pa
+
+15:14:23 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         'out={}\n'
+         "out['layers']=cmds.ls(type='animLayer') or []\n"
+         "out['selection']=[x.rsplit('|',1)[-1] for x in "
+         '(cmds.ls(sl=True,long=True) or [])]\n'
+         "b=cmds.ls('Bone107',long=True) or cmds.ls('*Bone107*',long=True)\n"
+         "out['bone107']=b\n"
+         'if b:\n'
+         '    n=b[0]; d={}\n'
+         "    for a in ['rotateX','rotateY','rotateZ']:\n"
+         "        plug=n+'.'+a\n"
+         '        '
+         "d[a]={'plugKeys':cmds.keyframe(plug,q=True,keyframeCount=True) or "
+         '0}\n'
+         "        for l in out['layers']:\n"
+         '            try:\n'
+         '                c=cmds.animLayer(l,q=True,findCurveForPlug=plug)\n'
+         '                if c:\n'
+         '                    c=c[0] if isinstance(c,(list,tuple)) else c\n'
+         '                    '
+         "d[a][l]={'curve':c,'keys':cmds.keyframe(c,q=True,keyframeCount=True) "
+         'or 0}\n'
+         '            except Exception: pass\n'
+         "    out['rot']=d\n"
+         'result=out'}
+
+15:14:23 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+15:14:23 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 3112 字符
+
+15:14:23 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 425 字符
+
+15:14:23 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"layers": ["BaseAnimation"], "selection": ["Bone621"], "bone107": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032Neck|Bip001FBXASC032Head|Bone107"], "rot": {"rotateX": {"plugKeys": 521}, "rotateY": {"plugKeys": 521}, "rotateZ": {"plugKeys": 521}}}, "output": "", "message": "Python \u811a\u672c\u6267\u884c\u6210\u529f\u3002"}
+
+15:31:33 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         '\n'
+         "def short(n): return n.rsplit('|',1)[-1]\n"
+         'def roots_from_selection(sel):\n'
+         '    sel_set=set(sel); roots=[]\n'
+         '    for s in sel:\n'
+         '        p=cmds.listRelatives(s,parent=True,fullPath=True) or []\n'
+         '        child=False\n'
+         '        while p:\n'
+         '            if p[0] in sel_set: child=True; break\n'
+         '            p=cmds.listRelatives(p[0],parent=True,fullPath=True) or '
+         '[]\n'
+         '        if not child: roots.append(s)\n'
+         '    return roots\n'
+         'def all_desc(root):\n'
+         '    '
+         "kids=cmds.listRelatives(root,ad=True,type='transform',fullPath=True) "
+         'or []\n'
+         "    kids=sorted(kids,key=lambda x:x.count('|'))\n"
+         '    out=[root]\n'
+         '    for k in kids:\n'
+         '        if k not in out: out.append(k)\n'
+         '    return out\n'
+         "attrs=['translateX','translateY','translateZ','rotateX','rotateY','rotateZ','scaleX','scaleY','scaleZ']\n"
+         'sel=cmds.ls(sl=True,long=True) or []\n'
+         'roots=roots_from_selection(sel)\n'
+         'nodes=[]\n'
+         'for r in roots: nodes.extend(all_desc(r))\n'
+         'seen=set(); nodes=[n for n in nodes if not (n in seen or '
+         'seen.add(n))]\n'
+         'mn=cmds.playbackOptions(q=True,min=True); '
+         'mx=cmds.playbackOptions(q=True,max=True); '
+         'cur=cmds.currentTime(q=True)\n'
+         'sample_frames=[mn,mn+1,2,5,10,50,100,260,mx]\n'
+         "out={'label':'before_merge_reference','timeRange':[mn,mx],'currentTime':cur,'selection':[short(s) "
+         "for s in sel],'selectionLong':sel,'roots':[short(r) for r in "
+         "roots],'rootsLong':roots,'nodeCount':len(nodes),'nodes':[short(n) "
+         'for n in nodes]}\n'
+         '# layers\n'
+         "layers=cmds.ls(type='animLayer') or []\n"
+         'layer_info={}\n'
+         'for l in layers:\n'
+         '    info={}\n'
+         '    for a in '
+         "['weight','mute','solo','override','passthrough','lock','preferred']:\n"
+         "        try: info[a]=cmds.getAttr(l+'.'+a)\n"
+         '        except Exception: pass\n'
+         "    try: info['selected']=cmds.animLayer(l,q=True,selected=True)\n"
+         '    except Exception: pass\n'
+         '    try:\n'
+         '        curves=cmds.animLayer(l,q=True,animCurves=True) or []\n'
+         "        info['animCurveCount']=len(curves); "
+         "info['animCurves']=curves[:120]\n"
+         "    except Exception as e: info['animCurveErr']=str(e)\n"
+         '    try:\n'
+         "        kc=cmds.keyframe(l+'.weight',q=True,keyframeCount=True) or "
+         '0\n'
+         "        ts=cmds.keyframe(l+'.weight',q=True,timeChange=True) or []\n"
+         "        vs=cmds.keyframe(l+'.weight',q=True,valueChange=True) or []\n"
+         "        info['weightKeys']=[[ts[i],round(vs[i],6)] for i in "
+         'range(len(ts))]\n'
+         '    except Exception: pass\n'
+         '    layer_info[l]=info\n'
+         "out['layers']=layers; out['layerInfo']=layer_info\n"
+         'node_info={}; key_totals={}; layer_counts={}; samples_final={}\n'
+         'for n in nodes:\n'
+         "    sn=short(n); nd={'attrs':{}}; keyed={}; lcnode={}; smp={}\n"
+         '    for a in attrs:\n'
+         "        plug=n+'.'+a; ad={}\n"
+         "        try: ad['current']=round(cmds.getAttr(plug),6)\n"
+         '        except Exception: pass\n'
+         '        try:\n'
+         '            kc=cmds.keyframe(plug,q=True,keyframeCount=True) or 0; '
+         "ad['keyCount']=int(kc)\n"
+         '            if kc:\n'
+         '                ts=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         '                vs=cmds.keyframe(plug,q=True,valueChange=True) or '
+         '[]\n'
+         "                ad['firstLast']=[ts[0],ts[-1]] if ts else None\n"
+         "                ad['keysPreview']=[[ts[i],round(vs[i],6)] for i in "
+         'range(min(len(ts),8))]\n'
+         '                keyed[a]=int(kc)\n'
+         "        except Exception as e: ad['keyErr']=str(e)\n"
+         '        vals=[]\n'
+         '        for f in sample_frames:\n'
+         '            try: '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),6)])\n'
+         '            except Exception: pass\n'
+         "        ad['samplesFinal']=vals; smp[a]=vals\n"
+         '        lc={}\n'
+         '        for l in layers:\n'
+         '            try:\n'
+         '                c=cmds.animLayer(l,q=True,findCurveForPlug=plug)\n'
+         '                if c:\n'
+         '                    c=c[0] if isinstance(c,(list,tuple)) else c\n'
+         '                    ckc=cmds.keyframe(c,q=True,keyframeCount=True) '
+         'or 0\n'
+         '                    cts=cmds.keyframe(c,q=True,timeChange=True) or '
+         '[]\n'
+         '                    cvs=cmds.keyframe(c,q=True,valueChange=True) or '
+         '[]\n'
+         '                    itt=cmds.keyTangent(c,q=True,inTangentType=True) '
+         'or []\n'
+         '                    '
+         'ott=cmds.keyTangent(c,q=True,outTangentType=True) or []\n'
+         '                    '
+         "lc[l]={'curve':c,'keyCount':int(ckc),'firstLast':[cts[0],cts[-1]] if "
+         "cts else None,'keysPreview':[[cts[i],round(cvs[i],6),itt[i] if "
+         "i<len(itt) else '',ott[i] if i<len(ott) else ''] for i in "
+         'range(min(len(cts),10))]}\n'
+         '            except Exception: pass\n'
+         "        if lc: ad['layerCurves']=lc\n"
+         '        for l,v in lc.items(): '
+         "lcnode.setdefault(l,{})[a]=v['keyCount']\n"
+         "        nd['attrs'][a]=ad\n"
+         '    node_info[sn]=nd; key_totals[sn]=keyed; samples_final[sn]=smp\n'
+         '    if lcnode: layer_counts[sn]=lcnode\n'
+         "out['keyCountTotals']=key_totals\n"
+         "out['layerKeyCountsByNode']=layer_counts\n"
+         "out['samplesFinal']=samples_final\n"
+         "out['nodeInfo']=node_info\n"
+         'result=out'}
+
+15:31:33 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+15:31:33 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 6823 字符
+
+15:31:33 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 94184 字符
+
+15:31:33 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"label": "before_merge_reference", "timeRange": [0.0, 520.0], "currentTime": 0.0, "selection": ["Bone609"], "selectionLong": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|Bip001FBXASC032Spine1|Bip001FBXASC032Spine2|Bip001FBXASC032RFBXASC032Clavicle|Bip001FBXASC032RFBXASC032UpperArm|Bip001FBXASC032RFBXASC032Forearm|Bip001FBXASC032RFBXASC032Hand|Bone001|Bone609"], "roots": ["Bone609"], "rootsLong": ["|Root|Bip001|Bip001FBXASC032Pelvis|Bip001FBXASC032Spine|B
+
+15:34:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import maya.cmds as cmds\n'
+         '\n'
+         "def short(n): return n.rsplit('|',1)[-1]\n"
+         'def roots_from_selection(sel):\n'
+         '    sel_set=set(sel); roots=[]\n'
+         '    for s in sel:\n'
+         '        p=cmds.listRelatives(s,parent=True,fullPath=True) or []\n'
+         '        child=False\n'
+         '        while p:\n'
+         '            if p[0] in sel_set: child=True; break\n'
+         '            p=cmds.listRelatives(p[0],parent=True,fullPath=True) or '
+         '[]\n'
+         '        if not child: roots.append(s)\n'
+         '    return roots\n'
+         'def all_desc(root):\n'
+         '    '
+         "kids=cmds.listRelatives(root,ad=True,type='transform',fullPath=True) "
+         'or []\n'
+         "    kids=sorted(kids,key=lambda x:x.count('|'))\n"
+         '    out=[root]\n'
+         '    for k in kids:\n'
+         '        if k not in out: out.append(k)\n'
+         '    return out\n'
+         "attrs=['translateX','translateY','translateZ','rotateX','rotateY','rotateZ','scaleX','scaleY','scaleZ']\n"
+         'sel=cmds.ls(sl=True,long=True) or []\n'
+         'roots=roots_from_selection(sel)\n'
+         'nodes=[]\n'
+         'for r in roots: nodes.extend(all_desc(r))\n'
+         'seen=set(); nodes=[n for n in nodes if not (n in seen or '
+         'seen.add(n))]\n'
+         'mn=cmds.playbackOptions(q=True,min=True); '
+         'mx=cmds.playbackOptions(q=True,max=True); '
+         'cur=cmds.currentTime(q=True)\n'
+         'sample_frames=[mn,mn+1,2,5,10,50,100,260,mx]\n'
+         "out={'label':'after_merge_current','timeRange':[mn,mx],'currentTime':cur,'selection':[short(s) "
+         "for s in sel],'roots':[short(r) for r in "
+         "roots],'nodeCount':len(nodes),'nodes':[short(n) for n in nodes]}\n"
+         "layers=cmds.ls(type='animLayer') or []\n"
+         'layer_info={}\n'
+         'for l in layers:\n'
+         '    info={}\n'
+         '    for a in '
+         "['weight','mute','solo','override','passthrough','lock','preferred']:\n"
+         "        try: info[a]=cmds.getAttr(l+'.'+a)\n"
+         '        except Exception: pass\n'
+         "    try: info['selected']=cmds.animLayer(l,q=True,selected=True)\n"
+         '    except Exception: pass\n'
+         '    try:\n'
+         '        curves=cmds.animLayer(l,q=True,animCurves=True) or []\n'
+         "        info['animCurveCount']=len(curves); "
+         "info['animCurves']=curves[:60]\n"
+         "    except Exception as e: info['animCurveErr']=str(e)\n"
+         '    layer_info[l]=info\n'
+         "out['layers']=layers; out['layerInfo']=layer_info\n"
+         'key_totals={}; layer_counts={}; samples_final={}; node_info={}\n'
+         'for n in nodes:\n'
+         "    sn=short(n); keyed={}; lcnode={}; smp={}; nd={'attrs':{}}\n"
+         '    for a in attrs:\n'
+         "        plug=n+'.'+a; ad={}\n"
+         '        try:\n'
+         '            kc=cmds.keyframe(plug,q=True,keyframeCount=True) or 0; '
+         "ad['keyCount']=int(kc)\n"
+         '            if kc:\n'
+         '                ts=cmds.keyframe(plug,q=True,timeChange=True) or []\n'
+         '                vs=cmds.keyframe(plug,q=True,valueChange=True) or '
+         '[]\n'
+         "                ad['firstLast']=[ts[0],ts[-1]] if ts else None\n"
+         "                ad['keysPreview']=[[ts[i],round(vs[i],6)] for i in "
+         'range(min(len(ts),10))]\n'
+         '                keyed[a]=int(kc)\n'
+         "        except Exception as e: ad['keyErr']=str(e)\n"
+         '        vals=[]\n'
+         '        for f in sample_frames:\n'
+         '            try: '
+         'vals.append([f,round(cmds.getAttr(plug,time=f),6)])\n'
+         '            except Exception: pass\n'
+         "        ad['samplesFinal']=vals; smp[a]=vals\n"
+         '        lc={}\n'
+         '        for l in layers:\n'
+         '            try:\n'
+         '                c=cmds.animLayer(l,q=True,findCurveForPlug=plug)\n'
+         '                if c:\n'
+         '                    c=c[0] if isinstance(c,(list,tuple)) else c\n'
+         '                    ckc=cmds.keyframe(c,q=True,keyframeCount=True) '
+         'or 0\n'
+         '                    cts=cmds.keyframe(c,q=True,timeChange=True) or '
+         '[]\n'
+         '                    cvs=cmds.keyframe(c,q=True,valueChange=True) or '
+         '[]\n'
+         '                    '
+         "lc[l]={'curve':c,'keyCount':int(ckc),'firstLast':[cts[0],cts[-1]] if "
+         "cts else None,'keysPreview':[[cts[i],round(cvs[i],6)] for i in "
+         'range(min(len(cts),10))]}\n'
+         '            except Exception: pass\n'
+         "        if lc: ad['layerCurves']=lc\n"
+         '        for l,v in lc.items(): '
+         "lcnode.setdefault(l,{})[a]=v['keyCount']\n"
+         "        nd['attrs'][a]=ad\n"
+         '    key_totals[sn]=keyed; samples_final[sn]=smp; node_info[sn]=nd\n'
+         '    if lcnode: layer_counts[sn]=lcnode\n'
+         "out['keyCountTotals']=key_totals\n"
+         "out['layerKeyCountsByNode']=layer_counts\n"
+         "out['samplesFinal']=samples_final\n"
+         "out['nodeInfo']=node_info\n"
+         'result=out'}
+
+15:34:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+15:34:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 6162 字符
+
+15:34:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 47348 字符
+
+15:34:37 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": {"label": "after_merge_current", "timeRange": [0.0, 520.0], "currentTime": 0.0, "selection": ["Bone609"], "roots": ["Bone609"], "nodeCount": 12, "nodes": ["Bone609", "Bone610", "Bone611", "Bone612", "Bone613", "Bone614", "Bone615", "Bone616", "Bone617", "Bone618", "Bone619", "Bone620"], "layers": ["BaseAnimation"], "layerInfo": {"BaseAnimation": {"weight": 1.0, "mute": false, "solo": false, "override": true, "passthrough": true, "lock": false, "preferred": true, "sele
+
+16:40:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool get_maya_version with arguments: {}
+
+16:40:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+16:40:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 1824 字符
+
+16:40:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 144 字符
+
+16:40:02 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "version": "2023", "api_version": 20230304, "product": "Maya 2023", "message": "Maya 2023 (version 2023, api 20230304)\u3002"}
+
+16:44:48 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - INFO  
+	Calling tool execute_python_script with arguments: {'code': 'import sys\n'
+         'mods = []\n'
+         'for name, mod in sys.modules.items():\n'
+         "    if 'server_listener' in name or 'max' in name.lower() or "
+         "'maya_server_listener' in name:\n"
+         "        mods.append((name, getattr(mod, '__file__', '')))\n"
+         'result = mods'}
+
+16:44:48 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已连接到 Maya (127.0.0.1:50011)
+
+16:44:48 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	已发送脚本，长度: 2568 字符
+
+16:44:48 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	收到结果，长度: 216 字符
+
+16:44:48 - MayaMCPServer - C:/Users/yanchaofeng/Documents/GitHub/MayaMCP/maya_mcp/server.py - DEBUG 
+	send_python_command result: {"success": true, "result": [["aiMaxTemplate", "C:\\Program Files\\Autodesk\\Arnold\\maya2023\\scripts\\mtoa\\ui\\ae\\aiMaxTemplate.py"]], "output": "", "message": "Python \u811a\u672c\u6267\u884c\u6210\u529f\u3002"}
+
