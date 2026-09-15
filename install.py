@@ -64,17 +64,28 @@ def _maya_app_dir():
 def _usersetup_paths(app_dir):
     """返回要写入的 userSetup.py 路径列表。
 
-    优先使用版本无关的 `<maya>/scripts/userSetup.py`（对所有版本生效）。
-    若不存在则也覆盖各版本目录，确保至少命中用户当前版本。
+    Maya Windows 用户脚本通常位于 `<maya>/scripts`，但本地化 Maya
+    也可能把当前版本的脚本目录放在 `<maya>/<version>/<locale>/scripts`
+    （例如 `2023/zh_CN/scripts`）。两类路径都写入，确保 userSetup.py
+    能被不同语言配置的 Maya 发现。
     """
     paths = []
     generic = os.path.join(app_dir, "scripts")
     paths.append(os.path.join(generic, "userSetup.py"))
     for ver_dir in glob.glob(os.path.join(app_dir, "20*")):
-        scripts = os.path.join(ver_dir, "scripts")
-        if os.path.isdir(scripts):
-            paths.append(os.path.join(scripts, "userSetup.py"))
-    return paths
+        version_scripts = os.path.join(ver_dir, "scripts")
+        paths.append(os.path.join(version_scripts, "userSetup.py"))
+
+        # Localized Maya configurations may use e.g. <version>/zh_CN/scripts.
+        for locale_dir in glob.glob(os.path.join(ver_dir, "*")):
+            if not os.path.isdir(locale_dir):
+                continue
+            locale_scripts = os.path.join(locale_dir, "scripts")
+            if os.path.isdir(locale_scripts) or os.path.basename(locale_dir).lower() not in {"prefs", "scripts"}:
+                paths.append(os.path.join(locale_scripts, "userSetup.py"))
+
+    # Keep order stable while avoiding duplicate paths.
+    return list(dict.fromkeys(paths))
 
 
 def _strip_block(text):
