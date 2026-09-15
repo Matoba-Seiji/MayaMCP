@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Rigging MCP 一键安装器。
+"""Maya MCP 一键安装器。
 
-把 "Rigging MCP" 顶栏菜单的启动代码写入 Maya 的 userSetup.py，
-使 Maya 每次启动时自动注册菜单（菜单内可一键启停监听 / 打开控制面板）。
+把 "Maya MCP" 顶栏菜单的启动代码写入 Maya 的 userSetup.py，
+使 Maya 每次启动时自动注册菜单，提供监听服务管理。
 
 用法（用任意系统 Python 运行即可，无需 mayapy）:
     python install.py            # 安装
@@ -17,31 +17,31 @@ import glob
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__)).replace("\\", "/")
 MENU_FILE = os.path.join(PROJECT_ROOT, "maya_mcp", "ui", "menu.py").replace("\\", "/")
 
-MARK_BEGIN = "# >>> MayaRiggingMCP MENU (auto-generated) >>>"
-MARK_END = "# <<< MayaRiggingMCP MENU <<<"
+MARK_BEGIN = "# >>> MayaMCP MENU (auto-generated) >>>"
+MARK_END = "# <<< MayaMCP MENU <<<"
 
 
 def _boot_block():
     return f"""{MARK_BEGIN}
-def _rigging_mcp_boot():
+def _maya_mcp_boot():
     import importlib.util, os
     menu_file = r"{MENU_FILE}"
     if not os.path.isfile(menu_file):
-        print("[RiggingMCP] 菜单文件不存在:", menu_file)
+        print("[MayaMCP] 菜单文件不存在:", menu_file)
         return
     try:
-        spec = importlib.util.spec_from_file_location("rigging_mcp_menu_boot", menu_file)
+        spec = importlib.util.spec_from_file_location("maya_mcp_menu_boot", menu_file)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         mod.create_menu()
-        print("[RiggingMCP] 菜单已加载")
+        print("[MayaMCP] 菜单已加载")
     except Exception as _e:
-        print("[RiggingMCP] 菜单加载失败:", _e)
+        print("[MayaMCP] 菜单加载失败:", _e)
 try:
     import maya.utils as _mu
-    _mu.executeDeferred(_rigging_mcp_boot)
+    _mu.executeDeferred(_maya_mcp_boot)
 except Exception as _e:
-    print("[RiggingMCP] 启动失败:", _e)
+    print("[MayaMCP] 启动失败:", _e)
 {MARK_END}
 """
 
@@ -108,7 +108,7 @@ def install():
     print("[安装完成] 已写入以下 userSetup.py:")
     for p in written:
         print("  -", p)
-    print("\n重启 Maya 后，顶部会出现 “Rigging MCP” 菜单。")
+    print("\n重启 Maya 后，顶部会出现 “Maya MCP” 菜单。")
     _print_mcp_config()
 
 
@@ -137,7 +137,7 @@ def uninstall():
 def _print_mcp_config():
     print("\n将以下配置加入 MCP 客户端 (mcp.json) 即可让 AI 调用工具:")
     print("-" * 60)
-    print(f'''  "rigging-maya-mcp": {{
+    print(f'''  "maya-mcp": {{
       "command": "python",
       "args": ["-m", "maya_mcp"],
       "cwd": "{PROJECT_ROOT}"
