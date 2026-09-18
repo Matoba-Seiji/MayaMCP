@@ -1,18 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Maya MCP 一键安装器。
+"""Install the MayaMCP menu into Maya's userSetup.py."""
 
-把 "Maya MCP" 顶栏菜单的启动代码写入 Maya 的 userSetup.py，
-使 Maya 每次启动时自动注册菜单，提供监听服务管理。
-
-用法（用任意系统 Python 运行即可，无需 mayapy）:
-    python install.py            # 安装
-    python install.py --uninstall  # 卸载
-"""
-
+import glob
 import os
 import sys
-import glob
+
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__)).replace("\\", "/")
 MENU_FILE = os.path.join(PROJECT_ROOT, "maya_mcp", "ui", "menu.py").replace("\\", "/")
@@ -47,100 +40,94 @@ except Exception as _e:
 
 
 def _maya_app_dir():
-    """定位 Maya 用户目录（MAYA_APP_DIR 优先，否则 ~/Documents/maya）。"""
+    """Locate Maya's user directory."""
     env = os.environ.get("MAYA_APP_DIR")
     if env and os.path.isdir(env):
         return env
+
     candidates = [
         os.path.join(os.path.expanduser("~"), "Documents", "maya"),
         os.path.join(os.path.expanduser("~"), "maya"),
     ]
-    for c in candidates:
-        if os.path.isdir(c):
-            return c
+    for candidate in candidates:
+        if os.path.isdir(candidate):
+            return candidate
     return candidates[0]
 
 
 def _usersetup_paths(app_dir):
-    """返回要写入的 userSetup.py 路径列表。
+    """Return generic, versioned, and localized Maya userSetup.py paths."""
+    paths = [os.path.join(app_dir, "scripts", "userSetup.py")]
 
-    Maya Windows 用户脚本通常位于 `<maya>/scripts`，但本地化 Maya
-    也可能把当前版本的脚本目录放在 `<maya>/<version>/<locale>/scripts`
-    （例如 `2023/zh_CN/scripts`）。两类路径都写入，确保 userSetup.py
-    能被不同语言配置的 Maya 发现。
-    """
-    paths = []
-    generic = os.path.join(app_dir, "scripts")
-    paths.append(os.path.join(generic, "userSetup.py"))
-    for ver_dir in glob.glob(os.path.join(app_dir, "20*")):
-        version_scripts = os.path.join(ver_dir, "scripts")
-        paths.append(os.path.join(version_scripts, "userSetup.py"))
-
-        # Localized Maya configurations may use e.g. <version>/zh_CN/scripts.
-        for locale_dir in glob.glob(os.path.join(ver_dir, "*")):
+    for version_dir in glob.glob(os.path.join(app_dir, "20*")):
+        paths.append(os.path.join(version_dir, "scripts", "userSetup.py"))
+        for locale_dir in glob.glob(os.path.join(version_dir, "*")):
             if not os.path.isdir(locale_dir):
                 continue
             locale_scripts = os.path.join(locale_dir, "scripts")
             if os.path.isdir(locale_scripts) or os.path.basename(locale_dir).lower() not in {"prefs", "scripts"}:
                 paths.append(os.path.join(locale_scripts, "userSetup.py"))
 
-    # Keep order stable while avoiding duplicate paths.
     return list(dict.fromkeys(paths))
 
 
 def _strip_block(text):
-    """移除已存在的自动生成块。"""
+    """Remove a previously installed MayaMCP block."""
     if MARK_BEGIN not in text:
         return text, False
-    before = text.split(MARK_BEGIN)[0]
-    after = text.split(MARK_END)[-1] if MARK_END in text else ""
+
+    before = text.split(MARK_BEGIN, 1)[0]
+    after = text.split(MARK_END, 1)[-1] if MARK_END in text else ""
     new = before.rstrip() + ("\n" + after.lstrip() if after.strip() else "\n")
     return new, True
 
 
 def install():
     app_dir = _maya_app_dir()
-    targets = _usersetup_paths(app_dir)
     written = []
-    for path in targets:
+
+    for path in _usersetup_paths(app_dir):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         text = ""
         if os.path.isfile(path):
-            with open(path, "r", encoding="utf-8") as f:
-                text = f.read()
+            with open(path, "r", encoding="utf-8") as stream:
+                text = stream.read()
+
         text, _ = _strip_block(text)
         if text and not text.endswith("\n"):
             text += "\n"
         text += "\n" + _boot_block()
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
+
+        with open(path, "w", encoding="utf-8") as stream:
+            stream.write(text)
         written.append(path)
 
     print("[安装完成] 已写入以下 userSetup.py:")
-    for p in written:
-        print("  -", p)
+    for path in written:
+        print("  -", path)
     print("\n重启 Maya 后，顶部会出现 “Maya MCP” 菜单。")
     _print_mcp_config()
 
 
 def uninstall():
     app_dir = _maya_app_dir()
-    targets = _usersetup_paths(app_dir)
     cleaned = []
-    for path in targets:
+
+    for path in _usersetup_paths(app_dir):
         if not os.path.isfile(path):
             continue
-        with open(path, "r", encoding="utf-8") as f:
-            text = f.read()
+        with open(path, "r", encoding="utf-8") as stream:
+            text = stream.read()
         new, found = _strip_block(text)
         if found:
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(new)
+            with open(path, "w", encoding="utf-8") as stream:
+                stream.write(new)
             cleaned.append(path)
+
     if cleaned:
         print("[卸载完成] 已从以下文件移除菜单启动块:")
-        for p in cleaned:
-            print("  -", p)
+        for path in cleaned:
+            print("  -", path)
     else:
         print("[卸载] 未发现已安装的菜单启动块。")
 
