@@ -46,7 +46,7 @@ MayaMCP 将 MCP 客户端、运行在外部 Python 环境中的 MCP Server，以
 
 - Python 3.10 或更高版本。
 - 可安装以下 Python 依赖：
-  - `mcp>=1.0.0`
+  - `mcp>=1.0.0,<2.0.0`
 
 ### Maya 端
 
@@ -83,7 +83,7 @@ python -m pip install -e .
 如果不需要可编辑安装，也可以只安装依赖：
 
 ```bash
-python -m pip install "mcp>=1.0.0"
+python -m pip install "mcp>=1.0.0,<2.0.0"
 ```
 
 ## 启动 Maya 监听器
