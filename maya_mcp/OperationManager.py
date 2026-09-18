@@ -5,6 +5,7 @@
 # Import built-in modules
 import os
 import inspect
+import logging
 import importlib.util
 from typing import Optional, List, get_origin, Any
 # Import third-party modules
@@ -12,9 +13,7 @@ from mcp.types import Tool
 from mcp.server.fastmcp.utilities.func_metadata import func_metadata
 from mcp.server.fastmcp.server import Context
 # Import local modules
-from maya_mcp.log import LogManager, log_file
-
-logger = LogManager.get_logger('MayaMCPServer', __file__, log_file)
+logger = logging.getLogger("MayaMCPServer")
 
 __all__ = ["OperationsManager"]
 

@@ -9,29 +9,24 @@
 import os
 import json
 import asyncio
+import logging
 import traceback
-from pprint import pformat
-from itertools import chain
-from typing import Sequence, List, Any, Dict
+from typing import List, Any, Dict
 
 # Import third-party modules
 import mcp.server.stdio
-from mcp.types import Tool, TextContent, ImageContent, EmbeddedResource
-from mcp.server.fastmcp.utilities.types import Image
+from mcp.types import Tool, TextContent
 from mcp.server.lowlevel import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
-import pydantic_core
 
 # Import local modules
 from maya_mcp.connector.maya_connection import MayaConnection
 from maya_mcp.OperationManager import OperationsManager
-from maya_mcp.log import LogManager, log_file
-
-logger = LogManager.get_logger('MayaMCPServer', __file__, log_file)
+logger = logging.getLogger("MayaMCPServer")
 
 __version__ = "0.1.0"  # 修改版本号时需同步更新 pyproject.toml 和 __init__.py
 
-# Maya 监听端口（与 3dsMaxMCP 的 50007 区分，避免冲突）
+# Maya listener address.
 MAYA_HOST = '127.0.0.1'
 MAYA_PORT = 50011
 
@@ -64,19 +59,13 @@ async def run(server: Server, server_name: str):
         )
 
 
-def convert_to_content(result: Any) -> Sequence[TextContent | ImageContent | EmbeddedResource]:
-    """将结果统一转换为 MCP 内容对象列表。"""
+def convert_to_content(result: Any) -> List[TextContent]:
+    """将工具结果转换为 MCP 文本内容。"""
     if result is None:
         return []
-    if isinstance(result, TextContent | ImageContent | EmbeddedResource):
-        return [result]
-    if isinstance(result, Image):
-        return [result.to_image_content()]
-    if isinstance(result, list | tuple):
-        return list(chain.from_iterable(convert_to_content(item) for item in result))
     if not isinstance(result, str):
         try:
-            result = json.dumps(pydantic_core.to_jsonable_python(result))
+            result = json.dumps(result, ensure_ascii=False)
         except Exception:
             result = str(result)
     return [TextContent(type="text", text=result)]
@@ -150,7 +139,7 @@ def main():
 
     @server.call_tool()
     async def handle_call_tool(name: str, arguments: dict | None):
-        logger.info(f"Calling tool {name} with arguments: {pformat(arguments)}")
+        logger.info(f"Calling tool {name} with arguments: {arguments}")
 
         path = operation_manager.get_file_path(name)
         if not path:

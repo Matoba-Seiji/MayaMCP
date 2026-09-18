@@ -47,8 +47,6 @@ MayaMCP 将 MCP 客户端、运行在外部 Python 环境中的 MCP Server，以
 - Python 3.10 或更高版本。
 - 可安装以下 Python 依赖：
   - `mcp>=1.0.0`
-  - `pydantic>=2.0.0`
-  - `pydantic-core>=2.0.0`
 
 ### Maya 端
 
@@ -85,14 +83,14 @@ python -m pip install -e .
 如果不需要可编辑安装，也可以只安装依赖：
 
 ```bash
-python -m pip install "mcp>=1.0.0" "pydantic>=2.0.0" "pydantic-core>=2.0.0"
+python -m pip install "mcp>=1.0.0"
 ```
 
 ## 启动 Maya 监听器
 
 MCP Server 启动前，必须先让 Maya 监听 `127.0.0.1:50011`。
 
-### 方式一：通过 Script Editor 启动
+### 通过 Script Editor 启动
 
 1. 打开 Maya。
 2. 打开 **Script Editor**，切换到 **Python** 标签。
@@ -117,7 +115,7 @@ exec(open(
 stop_mcp_server()
 ```
 
-### 方式二：通过 Maya 顶部菜单管理
+### 通过 Maya 顶部菜单管理
 
 运行安装器，将 MayaMCP 菜单注册到 Maya 的 `userSetup.py`：
 
@@ -125,12 +123,7 @@ stop_mcp_server()
 python install.py
 ```
 
-安装器会尝试写入：
-
-- 通用路径：`<Maya 用户目录>/scripts/userSetup.py`
-- 已存在的 Maya 版本目录下的 `scripts/userSetup.py`
-
-重启 Maya 后，顶部会出现 **Maya MCP** 菜单，可执行：
+安装器会尝试写入通用、版本和本地化 Maya 脚本目录中的 `userSetup.py`。重启 Maya 后，顶部会出现 **Maya MCP** 菜单，可执行：
 
 - 启动监听
 - 停止监听
@@ -143,7 +136,7 @@ python install.py
 python install.py --uninstall
 ```
 
-> `install.py` 会把当前仓库的绝对路径写入 `userSetup.py`。如果仓库移动到了其他位置，请重新执行安装；如果不再使用本项目，建议执行卸载命令。
+如果仓库移动到了其他位置，请重新执行安装器，让 `userSetup.py` 中的菜单路径保持正确。
 
 ## 配置 MCP 客户端
 
@@ -312,9 +305,9 @@ Port: 50011
 
 修改后需要重启 Maya 监听器和 MCP Server。
 
-## 日志与故障排查
+## 故障排查
 
-MCP Server 日志默认写入系统临时目录中的 `MayaMCPServer.log`，仓库内的 `MayaMCPServer.log` 也可能作为本地调试日志保留。
+MCP Server 的诊断信息只写入 stderr，不会在仓库中生成日志文件。
 
 ### MCP 客户端无法连接
 
@@ -333,7 +326,7 @@ MCP Server 日志默认写入系统临时目录中的 `MayaMCPServer.log`，仓�
 2. 文件名和函数名是否一致。
 3. 工具脚本在没有 Maya 环境的情况下是否可以被扫描。
 4. 工具函数的参数是否包含有效类型注解。
-5. MCP Server 日志中是否存在工具预加载错误。
+5. MCP Server 的 stderr 是否存在工具预加载错误。
 
 ### 工具调用失败或连接超时
 

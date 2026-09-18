@@ -8,13 +8,10 @@
 # Import built-in modules
 import socket
 import json
+import logging
 import struct
-from enum import Enum
 
-# Import local modules
-from maya_mcp.log import LogManager, log_file
-
-logger = LogManager.get_logger('MayaMCPServer', __file__, log_file)
+logger = logging.getLogger("MayaMCPServer")
 
 # ============================================================
 # 通信协议
@@ -58,24 +55,6 @@ def _recv_all(sock: socket.socket) -> str:
         body_data += chunk
 
     return body_data.decode('utf-8')
-
-
-def _update_script_to_capture_stdout(python_script: str) -> str:
-    spaced_python_script = '    ' + python_script.replace('\n', '\n    ')
-    return f"""
-import io
-import contextlib
-_mcp_io_buf = io.StringIO()
-with contextlib.redirect_stdout(_mcp_io_buf):
-{spaced_python_script}
-_mcp_maya_results = _mcp_io_buf.getvalue()
-"""
-
-
-class ScriptReturn(Enum):
-    STDOUT = "stdout"
-    JSON = "json"
-    NONE = "none"
 
 
 class MayaConnection(object):
@@ -122,12 +101,9 @@ class MayaConnection(object):
         finally:
             client.close()
 
-    def run_python_script(self, python_script: str, *, returns: ScriptReturn = ScriptReturn.JSON):
-        """执行 Python 脚本并按指定返回类型处理结果。"""
-        if returns == ScriptReturn.STDOUT:
-            python_script = _update_script_to_capture_stdout(python_script)
-        elif returns == ScriptReturn.JSON:
-            python_script = "_mcp_maya_results = None\n" + python_script
+    def run_python_script(self, python_script: str):
+        """Execute a script and return the JSON result produced by Maya."""
+        python_script = "_mcp_maya_results = None\n" + python_script
 
         result = self._send_python_command(python_script)
         logger.debug(f"send_python_command result: {result[:500] if result else result}")
@@ -135,13 +111,13 @@ class MayaConnection(object):
         if result:
             result = result.strip()
 
-        if returns != ScriptReturn.NONE and (not result or result in ('', 'None', '\n')):
+        if not result or result in ('', 'None', '\n'):
             logger.debug("首次结果为空，尝试读取 _mcp_maya_results 变量")
             result = self._send_python_command("_mcp_maya_results")
             if result:
                 result = result.strip()
 
-        if returns != ScriptReturn.NONE and result:
+        if result:
             try:
                 result = json.loads(result)
             except (json.JSONDecodeError, TypeError):
