@@ -137,7 +137,12 @@ def _print_mcp_config():
     print("-" * 60)
     print(f'''  "maya-mcp": {{
       "command": "python",
-      "args": ["-m", "maya_mcp"],
+      "args": ["-m", "maya_mcp", "--port", "50016"],
+      "cwd": "{PROJECT_ROOT}"
+  }},
+  "maya-mcp-2": {{
+      "command": "python",
+      "args": ["-m", "maya_mcp", "--port", "50017"],
       "cwd": "{PROJECT_ROOT}"
   }}''')
     print("-" * 60)

@@ -26,9 +26,26 @@ logger = logging.getLogger("MayaMCPServer")
 
 __version__ = "0.1.0"  # 修改版本号时需同步更新 pyproject.toml 和 __init__.py
 
-# Maya listener address.
-MAYA_HOST = '127.0.0.1'
-MAYA_PORT = 50011
+# Maya listener address. Instances are selected by port; MAYAMCP_PORT is the
+# environment fallback and `python -m maya_mcp --port N` overrides it.
+DEFAULT_MAYA_HOST = '127.0.0.1'
+DEFAULT_MAYA_PORT = 50016
+PORT_ENV_VAR = 'MAYAMCP_PORT'
+
+
+def _port_from_env(default=DEFAULT_MAYA_PORT):
+    raw = os.environ.get(PORT_ENV_VAR)
+    if raw is None:
+        return default
+    try:
+        value = int(str(raw).strip())
+    except (TypeError, ValueError):
+        return default
+    return value if 0 < value < 65536 else default
+
+
+MAYA_HOST = DEFAULT_MAYA_HOST
+MAYA_PORT = _port_from_env()
 
 
 class OperationFactory:
@@ -126,8 +143,19 @@ def load_maya_tool_source(tool_name: str, filename: str, args: Dict[str, Any] = 
     return results
 
 
-def main():
-    """MCP Server 入口函数。"""
+def main(port=None, host=None):
+    """MCP Server 入口函数，供 `python -m maya_mcp` 调用。
+
+    port / host 指定要连接的 Maya 监听器；为 None 时使用 MAYAMCP_PORT
+    环境变量或默认的 50016 / 127.0.0.1。多个 Maya 实例各监听不同端口，
+    每个 MCP 客户端条目指向其中之一即可互不影响。
+    """
+    global MAYA_HOST, MAYA_PORT
+    if host is not None:
+        MAYA_HOST = host
+    if port is not None:
+        MAYA_PORT = int(port)
+    logger.info("MCP bridge targeting Maya listener at %s:%s", MAYA_HOST, MAYA_PORT)
     server_name = "MayaMCP"
     operation_manager = OperationFactory.get_operation_manager("maya")
     server = Server(server_name)

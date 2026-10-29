@@ -12,6 +12,10 @@ import maya.mel as mel
 MENU_NAME = "MayaMCPMenu"
 MENU_LABEL = "Maya MCP"
 
+# 每个 Maya 进程只监听一个端口；两个实例分别固定 50016 / 50017。
+# 50012 / 50013 已分配给 3dsMaxMCP 的两个实例，50011 等端口常被其他软件占用。
+INSTANCE_PORTS = (50016, 50017)
+
 
 def _load_sibling(name):
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), name + ".py")
@@ -38,7 +42,14 @@ def create_menu():
         return
 
     main_menu = cmds.menu(MENU_NAME, label=MENU_LABEL, parent=main_window, tearOff=True)
-    cmds.menuItem(label="启动监听", command=lambda *args: _start())
+    cmds.menuItem(
+        label="启动监听（实例1·%d）" % INSTANCE_PORTS[0],
+        command=lambda *args: _start(INSTANCE_PORTS[0]),
+    )
+    cmds.menuItem(
+        label="启动监听（实例2·%d）" % INSTANCE_PORTS[1],
+        command=lambda *args: _start(INSTANCE_PORTS[1]),
+    )
     cmds.menuItem(label="停止监听", command=lambda *args: _stop())
     cmds.menuItem(label="重启监听", command=lambda *args: _restart())
     cmds.menuItem(divider=True)
@@ -51,8 +62,8 @@ def delete_menu():
         cmds.deleteUI(MENU_NAME)
 
 
-def _start():
-    _ok, message = _service().start()
+def _start(port=None):
+    _ok, message = _service().start(port)
     print("[MayaMCP]", message)
 
 

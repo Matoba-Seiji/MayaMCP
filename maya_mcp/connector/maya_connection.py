@@ -6,6 +6,7 @@
 """
 
 # Import built-in modules
+import os
 import socket
 import json
 import logging
@@ -20,6 +21,22 @@ logger = logging.getLogger("MayaMCPServer")
 # Maya 端需运行 maya_server_listener.py 监听脚本。
 # ============================================================
 
+DEFAULT_HOST = '127.0.0.1'
+PORT_ENV_VAR = 'MAYAMCP_PORT'
+
+
+def _port_from_env(default=50016):
+    raw = os.environ.get(PORT_ENV_VAR)
+    if raw is None:
+        return default
+    try:
+        value = int(str(raw).strip())
+    except (TypeError, ValueError):
+        return default
+    return value if 0 < value < 65536 else default
+
+
+DEFAULT_PORT = _port_from_env()
 HEADER_SIZE = 4
 DEFAULT_RECV_BUFSIZE = 4096
 SOCKET_TIMEOUT = 120
@@ -64,10 +81,10 @@ class MayaConnection(object):
     发送 Python 脚本并接收执行结果。
     """
 
-    def __init__(self, host: str = '127.0.0.1', port: int = 50011):
+    def __init__(self, host: str = None, port: int = None):
         super(MayaConnection, self).__init__()
-        self._host = host
-        self._port = port
+        self._host = DEFAULT_HOST if host is None else host
+        self._port = DEFAULT_PORT if port is None else int(port)
 
     def _send_python_command(self, python_script: str) -> str:
         """通过 Socket 将 Python 脚本发送给 Maya 并读取返回结果。"""

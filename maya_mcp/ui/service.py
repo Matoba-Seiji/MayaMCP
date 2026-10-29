@@ -9,7 +9,7 @@ import sys
 
 LISTENER_MODULE = "maya_server_listener"
 DEFAULT_HOST = "127.0.0.1"
-DEFAULT_PORT = 50011
+DEFAULT_PORT = 50016
 
 
 def connector_dir():
@@ -56,16 +56,23 @@ def is_port_open(host_name=None, port_number=None, timeout=0.3):
 
 def is_running():
     listener = get_listener(create=False)
-    if listener is not None and bool(getattr(listener, "_server_running", False)):
-        return True
+    if listener is not None:
+        checker = getattr(listener, "is_running", None)
+        if callable(checker):
+            return bool(checker())
+        return bool(getattr(listener, "_server_running", False))
     return is_port_open()
 
 
-def start():
+def start(port=None):
+    """Start the listener on the given port (None keeps the default port)."""
     try:
         listener = get_listener(create=True)
-        listener.start_mcp_server()
-        return True, f"监听已启动: {host()}:{port()}"
+        ok = listener.start_mcp_server(port=port) if port is not None else listener.start_mcp_server()
+        if ok is False:
+            target = port if port is not None else listener.PORT
+            return False, f"启动失败: 无法监听 {listener.HOST}:{target}"
+        return True, f"监听已启动: {listener.HOST}:{listener.PORT}"
     except Exception as error:
         return False, f"启动失败: {error}"
 
@@ -81,10 +88,12 @@ def stop():
         return False, f"停止失败: {error}"
 
 
-def restart():
+def restart(port=None):
     try:
         listener = get_listener(create=True)
-        listener.restart_mcp_server()
-        return True, f"监听已重启: {host()}:{port()}"
+        ok = listener.restart_mcp_server(port=port) if port is not None else listener.restart_mcp_server()
+        if ok is False:
+            return False, f"重启失败: 无法监听 {listener.HOST}:{listener.PORT}"
+        return True, f"监听已重启: {listener.HOST}:{listener.PORT}"
     except Exception as error:
         return False, f"重启失败: {error}"

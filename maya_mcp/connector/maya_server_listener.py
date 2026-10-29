@@ -2,39 +2,53 @@
 # -*- coding: utf-8 -*-
 """Maya 内部 Socket Server 监听脚本。
 
-此脚本需要在 Maya 内部运行（通过 Script Editor 执行，或 userSetup 自动加载）。
+每个 Maya 进程各自运行一个监听器，用端口区分实例（默认 50016）：
+- 菜单 “启动监听（实例1·50016）” / “启动监听（实例2·50017）”；
+- 也可用 MAYAMCP_PORT 环境变量指定默认端口；
+- MCP 桥接端用 `python -m maya_mcp --port <端口>` 连接对应实例。
 
-启动后在后台线程监听 TCP 端口（默认 50011），接收来自 MCP Server 的 Python 脚本，
-通过 maya.utils.executeInMainThreadWithResult 调度到 **主线程** 执行（保证 maya.cmds 可用），
-执行完成后将结果返回。
+启动后在后台线程监听 TCP 端口，接收来自 MCP Server 的 Python 脚本，
+通过 maya.utils.executeInMainThreadWithResult 调度到 **主线程** 执行
+（保证 maya.cmds 可用），执行完成后将结果返回。
 
 通信协议:
     请求: [4字节大端序uint32: 消息体长度] + [UTF-8编码的Python脚本]
     响应: [4字节大端序uint32: 消息体长度] + [UTF-8编码的结果字符串]
-
-用法（在 Maya Script Editor 的 Python 标签中执行）:
-    import maya_server_listener        # 若已加入 sys.path
-    或直接 exec 本文件内容。
-
-停止:
-    stop_mcp_server()
 """
 
+import json
+import os
 import socket
 import struct
 import threading
 import traceback
-import json
 
 import maya.utils
 
 # ============================================================
 # 配置
 # ============================================================
-HOST = '127.0.0.1'
-PORT = 50011
+DEFAULT_HOST = '127.0.0.1'
+DEFAULT_PORT = 50016
+PORT_ENV_VAR = 'MAYAMCP_PORT'
 HEADER_SIZE = 4
 RECV_BUFSIZE = 4096
+
+
+def _port_from_env(default=DEFAULT_PORT):
+    """Resolve the listener port: MAYAMCP_PORT environment variable wins."""
+    raw = os.environ.get(PORT_ENV_VAR)
+    if raw is None:
+        return default
+    try:
+        value = int(str(raw).strip())
+    except (TypeError, ValueError):
+        return default
+    return value if 0 < value < 65536 else default
+
+
+HOST = DEFAULT_HOST
+PORT = _port_from_env()
 
 # ============================================================
 # 全局变量
@@ -151,22 +165,13 @@ def _handle_client(conn, addr):
         conn.close()
 
 
-def _server_loop():
+def _server_loop(server_socket):
     global _server_running, _server_socket
 
-    _server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    _server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    _server_socket.settimeout(1.0)
-
     try:
-        _server_socket.bind((HOST, PORT))
-        _server_socket.listen(5)
-        print(f"[MayaMCP] Socket Server 已启动，监听 {HOST}:{PORT}")
-        print("[MayaMCP] 等待 MCP Server 连接...")
-
         while _server_running:
             try:
-                conn, addr = _server_socket.accept()
+                conn, addr = server_socket.accept()
                 t = threading.Thread(target=_handle_client, args=(conn, addr), daemon=True)
                 t.start()
             except socket.timeout:
@@ -177,29 +182,75 @@ def _server_loop():
         print(f"[MayaMCP] 服务器错误: {e}")
         traceback.print_exc()
     finally:
-        if _server_socket:
-            _server_socket.close()
+        try:
+            server_socket.close()
+        except Exception:
+            pass
+        if _server_socket is server_socket:
             _server_socket = None
+            _server_running = False
         print("[MayaMCP] Socket Server 已停止")
 
 
 # ============================================================
 # 公共 API
 # ============================================================
-def start_mcp_server(host=HOST, port=PORT):
-    """启动 MCP Socket Server。"""
-    global _server_running, _server_thread, HOST, PORT
+def is_running():
+    """当前进程内的监听器是否在运行。"""
+    if not (_server_running and _server_socket and _server_thread):
+        return False
+    return bool(_server_thread.is_alive())
 
-    if _server_running:
-        print("[MayaMCP] 服务器已在运行中")
-        return
 
-    HOST = host
-    PORT = port
+def start_mcp_server(host=None, port=None):
+    """启动 MCP Socket Server。
+
+    host / port 为 None 时使用 MAYAMCP_PORT 环境变量或默认的
+    127.0.0.1:50016。已在其他端口运行时会自动切换到目标端口，
+    因此同一个 Maya 进程始终只监听一个端口。
+    """
+    global _server_running, _server_thread, _server_socket, HOST, PORT
+
+    target_host = HOST if host is None else host
+    target_port = PORT if port is None else int(port)
+
+    if is_running():
+        if str(HOST) == str(target_host) and int(PORT) == int(target_port):
+            print(f"[MayaMCP] 服务器已在运行中 ({HOST}:{PORT})")
+            return True
+
+    # Bind the new endpoint before stopping the old one, so a failed switch
+    # (e.g. the target port is occupied by another app) keeps the working
+    # listener alive.
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        if hasattr(socket, 'SO_EXCLUSIVEADDRUSE'):
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        else:
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.settimeout(1.0)
+        server_socket.bind((target_host, target_port))
+        server_socket.listen(5)
+    except Exception as exc:
+        try:
+            server_socket.close()
+        except Exception:
+            pass
+        print(f"[MayaMCP] 启动失败：无法监听 {target_host}:{target_port} ({exc})")
+        return False
+
+    if is_running():
+        stop_mcp_server()
+
+    HOST = target_host
+    PORT = target_port
+    _server_socket = server_socket
     _server_running = True
-    _server_thread = threading.Thread(target=_server_loop, daemon=True)
+    _server_thread = threading.Thread(target=_server_loop, args=(server_socket,), daemon=True)
     _server_thread.start()
-    print(f"[MayaMCP] 服务器启动中... (host={host}, port={port})")
+    print(f"[MayaMCP] Socket Server 已启动，监听 {HOST}:{PORT}")
+    print("[MayaMCP] 等待 MCP Server 连接...")
+    return True
 
 
 def stop_mcp_server():
@@ -208,7 +259,7 @@ def stop_mcp_server():
 
     if not _server_running:
         print("[MayaMCP] 服务器未在运行")
-        return
+        return False
 
     _server_running = False
     if _server_socket:
@@ -216,21 +267,25 @@ def stop_mcp_server():
             _server_socket.close()
         except Exception:
             pass
+        _server_socket = None
     if _server_thread:
         _server_thread.join(timeout=5)
         _server_thread = None
     print("[MayaMCP] 服务器已停止")
+    return True
 
 
-def restart_mcp_server(host=HOST, port=PORT):
-    """重启 MCP Socket Server。"""
+def restart_mcp_server(host=None, port=None):
+    """重启 MCP Socket Server；port 为 None 时沿用当前端口。"""
+    if port is None and is_running():
+        port = PORT
     stop_mcp_server()
     import time
     time.sleep(0.5)
-    start_mcp_server(host, port)
+    return start_mcp_server(host, port)
 
 
 # ============================================================
-# 自动启动
+# 自动启动（导入即启动默认端口，与既有用法保持一致）
 # ============================================================
 start_mcp_server()
